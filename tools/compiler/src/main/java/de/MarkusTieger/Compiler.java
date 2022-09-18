@@ -1111,11 +1111,9 @@ public class Compiler {
     	File src = new File(reborn, "src");
     	if(!src.exists()) src.mkdirs();
     	
-    	builder = new ProcessBuilder("rm", "-f", "common");
-    	builder.inheritIO().directory(src).start().waitFor();
+    	System.out.println("Copying Common Loader...");
     	
-    	builder = new ProcessBuilder("ln", "-s", "../../common/src/main", "common");
-    	builder.inheritIO().directory(src).start().waitFor();
+    	copyDirectory(new File("../../loader/common/src/java"), new File(src, "common"));
     	
     	System.out.println("Building...");
     	
@@ -1183,7 +1181,10 @@ public class Compiler {
 		
 		copyDirectory(new File(common, "src/main/java"), new File(baseDir, "src/common/java"));
 		copyDirectory(new File(common, "src/main/resources"), new File(baseDir, "src/common/resources"));
-	}
+	}*/
+    
+    
+    
 
 	private static void copyDirectory(File from, File to) throws IOException {
 		
@@ -1199,7 +1200,7 @@ public class Compiler {
 			}
 			
 		}
-	}*/
+	}
 
 	@SuppressWarnings("resource")
 	private static void copy(File in, File target) throws IOException {
