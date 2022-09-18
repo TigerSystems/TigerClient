@@ -1194,7 +1194,7 @@ public class Compiler {
 				File target = new File(to, f.getName());
 				if(!target.exists()) target.mkdirs();
 				
-				System.out.println("Directory: " + f.getAbsolutePath() + " TO: " + target.getAbsolutePath());
+				System.out.println("Directory: " + f.getAbsolutePath() + " TO: " + target.getAbsolutePath() + " Exists: " + target.exists());
 				
 				copyDirectory(f, target);
 			}
