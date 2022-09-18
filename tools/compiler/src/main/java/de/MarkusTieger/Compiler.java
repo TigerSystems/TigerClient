@@ -1192,7 +1192,7 @@ public class Compiler {
 			
 			if(f.isDirectory()) {
 				File target = new File(to, f.getName());
-				if(!target.exists()) target.mkdirs();
+				if(!target.exists()) target.mkdir();
 				
 				System.out.println("Directory: " + f.getAbsolutePath() + " TO: " + target.getAbsolutePath() + " Exists: " + target.exists());
 				
