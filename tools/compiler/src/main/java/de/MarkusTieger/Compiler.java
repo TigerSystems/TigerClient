@@ -1090,8 +1090,10 @@ public class Compiler {
     	builder = new ProcessBuilder("rm", "-rf", ".git/");
     	builder.directory(reborn).start().waitFor();
     	
+    	System.out.println("Setting up MCP-Reborn...");
+    	
     	builder = new ProcessBuilder("./gradlew", "-Dgradle.user.home=../../../data/gradle", "setup");
-    	builder.directory(reborn).start().waitFor();
+    	builder.inheritIO().directory(reborn).start().waitFor();
     	
     	copy(new File(baseDir, "build.gradle"), new File(reborn, "build.gradle"));
     	copy(new File(baseDir, "settings.gradle"), new File(reborn, "settings.gradle"));
@@ -1099,8 +1101,12 @@ public class Compiler {
     	builder = new ProcessBuilder("git", "init");
     	builder.inheritIO().directory(reborn).start().waitFor();
     	
+    	System.out.println("Applying Patch...");
+    	
     	builder = new ProcessBuilder("git", "apply", "../0002-Loader.patch");
     	builder.inheritIO().directory(reborn).start().waitFor();
+    	
+    	System.out.println("Building...");
     	
     	builder = new ProcessBuilder("./gradlew", "-Dgradle.user.home=../../../data/gradle", "build");
     	builder.directory(reborn);
