@@ -4,7 +4,6 @@
 **/.project
 **/.classpath
 data/mdk/
-data/gradle/
 data/compiled/
 **/README.txt
 **/temp*
@@ -18,3 +17,7 @@ tools/compiler/source*
 **/logs/
 **/saves/
 **/MCP-Reborn/
+
+
+data/gradle/*
+!data/gradle/gradle.properties
