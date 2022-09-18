@@ -31,3 +31,8 @@ jobs:
     - name: Compiling with Gradle
       run: "./gradlew -Dgradle.user.home=../../data/gradle run --args='${{ secrets.KEYSTORE_PASSWORD }}'"
       working-directory: tools/compiler/
+      
+    - uses: actions/upload-artifact@v3
+      with:
+        name: tigerclient-files
+        path: data/compiled/
