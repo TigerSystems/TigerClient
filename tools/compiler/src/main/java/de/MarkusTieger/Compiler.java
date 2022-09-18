@@ -1187,7 +1187,7 @@ public class Compiler {
     
 
 	private static void copyDirectory(File from, File to) throws IOException {
-		
+		if(!to.exists()) to.mkdirs();
 		for(File f : from.listFiles()) {
 			
 			if(f.isDirectory()) {
