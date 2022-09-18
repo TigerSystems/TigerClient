@@ -1111,7 +1111,7 @@ public class Compiler {
     	File src = new File(reborn, "src");
     	if(!src.exists()) src.mkdirs();
     	
-    	builder = new ProcessBuilder("rm", "-rf", "common");
+    	builder = new ProcessBuilder("rm", "-f", "common");
     	builder.inheritIO().directory(src).start().waitFor();
     	
     	builder = new ProcessBuilder("ln", "-s", "../../common/src/main", "common");
