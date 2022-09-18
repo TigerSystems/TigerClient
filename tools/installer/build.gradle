@@ -33,6 +33,7 @@ jar {
 }
 
 shadowJar {
+   archiveBaseName.set('Installer')
    archiveClassifier.set('all')
    archiveVersion.set('')
 }
