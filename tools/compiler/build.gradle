@@ -1,0 +1,57 @@
+plugins {
+	id 'java'
+	id 'application'
+	// id 'maven-publish'
+}
+
+group = 'de.MarkusTieger.tigerclient.compiler'
+archivesBaseName = 'compiler'
+version = '0.0.0'
+
+String mc_version = project.property("net.minecraft.version");
+String forge_version = project.property("net.minecraftforge.version");
+String mc_mappings = project.property("net.minecraft.mappings");
+
+String first_loader = "--::forge_loader=";
+String last_loader = "=forge_loader::--";
+		
+String first_client = "--::mc_version=";
+String last_client = "=mc_version::--";
+
+System.out.println(first_loader + forge_version + last_loader);
+System.out.println(first_client + mc_version + last_client);
+
+sourceCompatibility = 17
+targetCompatibility = 17
+
+repositories {
+    mavenCentral()
+}
+dependencies {
+	implementation 'com.google.code.gson:gson:2.8.9'
+	
+	compileOnly 'org.projectlombok:lombok:1.18.24'
+	annotationProcessor 'org.projectlombok:lombok:1.18.24'
+	
+	testCompileOnly 'org.projectlombok:lombok:1.18.24'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+	
+	implementation files('proguard.jar')
+	
+}
+
+application {
+    mainClass = 'de.MarkusTieger.Compiler'
+}
+
+/*publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = project.group
+            artifactId = project.archivesBaseName
+            version = project.version
+
+            from components.java
+        }
+    }
+}*/

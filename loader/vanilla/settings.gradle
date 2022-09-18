@@ -1,0 +1,4 @@
+rootProject.name = '07 Loader Vanilla'
+
+include ':mcp'
+project(":mcp").projectDir = file("projects/mcp")

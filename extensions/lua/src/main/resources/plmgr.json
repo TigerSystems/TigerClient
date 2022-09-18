@@ -1,0 +1,10 @@
+{
+	"api": "LuaJ",
+	"sandbox": true,
+	"language": "Lua",
+	"multi-compatibly": true,
+	"initializer": "de.MarkusTieger.tigerclient.lua.LuaInitializer",
+	"examples": [
+		"lua/basic.lua"
+	]
+}

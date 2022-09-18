@@ -1,0 +1,145 @@
+modLoader="javafml" #mandatory
+
+loaderVersion="[35,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+
+license="All rights reserved"
+
+#issueTrackerURL="http://my.issue.tracker/" #optional
+
+[[mods]] #mandatory
+
+modId="tc_loader_common" #mandatory
+
+version="0.0.0" #mandatory
+
+displayName="TigerClient Loader Common" #mandatory
+
+updateJSONURL="https://tigersystems.cf/tigerclient/files/config/forge.json" #optional
+
+displayURL="https://tigersystems.cf" #optional
+
+logoFile="icon_512.png" #optional
+
+#credits="Thanks to Workfalls Studios for the Module-Icons" #optional
+
+authors="MarkusTieger" #optional
+
+description="The Common Loader for the TigerClient"
+
+[[mods]] #mandatory
+
+modId="tc_loader_forge" #mandatory
+
+version="0.0.0" #mandatory
+
+displayName="TigerClient Loader Forge" #mandatory
+
+updateJSONURL="https://tigersystems.cf/tigerclient/files/config/forge.json" #optional
+
+displayURL="https://tigersystems.cf" #optional
+
+logoFile="icon_512.png" #optional
+
+#credits="Thanks to Workfalls Studios for the Module-Icons" #optional
+
+authors="MarkusTieger" #optional
+
+description="The Forge Loader for the TigerClient"
+
+[[mods]] #mandatory
+
+modId="tigerclient" #mandatory
+
+version="0.0.0" #mandatory
+
+displayName="TigerClient" #mandatory
+
+#updateJSONURL="https://tigersystems.cf/tigerclient/files/" #optional
+
+displayURL="https://tigersystems.cf" #optional
+
+logoFile="icon_512.png" #optional
+
+credits="Thanks to Workfalls Studios for the Module-Icons" #optional
+
+authors="MarkusTieger" #optional
+
+description="A Minecraft Client with a lot of features!"
+
+[[dependencies.tigerclient]]
+
+    modId="forge"
+    
+    mandatory=true
+    
+    versionRange="[37,)"
+    
+    ordering="NONE"
+    
+    side="CLIENT"
+
+
+# Client
+[[dependencies.tigerclient]]
+
+    modId="minecraft"
+    
+    mandatory=true
+
+    versionRange="[1.18.2,1.19)"
+    
+    ordering="NONE"
+    
+    side="BOTH"
+
+# Common Loader
+[[dependencies.tc_loader_common]]
+
+    modId="forge"
+
+    mandatory=true
+
+    versionRange="[37,)"
+
+    ordering="NONE"
+
+    side="CLIENT"
+
+
+# Forge Loader
+[[dependencies.tc_loader_common]]
+
+    modId="minecraft"
+
+    mandatory=true
+
+    versionRange="[1.18.2,1.19)"
+
+    ordering="NONE"
+
+    side="BOTH"
+
+[[dependencies.tc_loader_forge]]
+
+    modId="forge"
+
+    mandatory=true
+
+    versionRange="[37,)"
+
+    ordering="NONE"
+
+    side="CLIENT"
+
+
+[[dependencies.tc_loader_forge]]
+
+    modId="minecraft"
+
+    mandatory=true
+
+    versionRange="[1.18.2,1.19)"
+
+    ordering="NONE"
+
+    side="BOTH"

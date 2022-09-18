@@ -1,0 +1,5 @@
+rootProject.name = '07 Lua Extension'
+
+include ':client'
+project(":client").projectDir = file("../../client")
+project(":client").name = "00 Client"

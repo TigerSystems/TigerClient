@@ -1,0 +1,214 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url = 'https://maven.minecraftforge.net' }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:5+'
+        classpath "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:1.1.3"
+    }
+}
+
+import net.minecraftforge.forge.tasks.*
+import org.jetbrains.gradle.ext.*
+
+apply plugin: 'eclipse'
+apply plugin: 'net.minecraftforge.gradle.patcher'
+apply plugin: "org.jetbrains.gradle.plugin.idea-ext"
+
+println(' Java: ' + System.getProperty('java.version') +
+        ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ')' +
+        ' Arch: ' + System.getProperty('os.arch'))
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
+group = 'de.MarkusTieger.tigerclient.loader'
+version = '1.0.0'
+
+ext {
+    minecraft_version = '1.18.2'
+    mcp_version = '20220228.144236'
+    mappings_channel = 'official'
+    mappings_version = '1.18.2'
+    spi_version = '4.0.10'
+}
+
+sourceSets.main.java { srcDir 'src/common/java' }
+sourceSets.main.resources { srcDir 'src/common/resources' }
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation 'net.minecraftforge:forgespi:' + spi_version
+//    Use the shade to add the lib to the jar
+//    or use compile if you want to load the lib from the version.json
+//    from a maven repo
+//    shade 'package-here'
+//    compile 'package-here'
+
+	// implementation 'de.MarkusTieger.tigerclient.loader:tigerclient-loader-common:1.0.0'
+	// shade 'de.MarkusTieger.tigerclient.loader:tigerclient-loader-common:1.0.0'
+}
+
+abstract class GeneratePatch extends DefaultTask {
+
+    @TaskAction
+    def gen_patch() {
+       
+       def minecraft_version = "1.18.2";
+       def base = "/media/markustieger/Samsung-2TB/Eclipse/Projects/external/Git/TigerClient/loader/vanilla";
+       
+       println("Preparing...");
+       
+       exec(".", "cp", "build.gradle", base);
+       exec(".", "cp", "settings.gradle", base);
+       
+       exec(".", "git", "clone", "--branch", minecraft_version + "-official", "https://github.com/Hexeption/MCP-Reborn.git");
+       
+       exec(".", "cp", "-f", "build.gradle", "MCP-Reborn/");
+       exec(".", "cp", "-f", "settings.gradle", "MCP-Reborn/");
+       
+       println("Decompiling...");
+       
+       exec("MCP-Reborn/", "chmod", "+x", "./gradlew");
+       exec("MCP-Reborn/", "./gradlew", "setup");
+       
+       println("Commit Base...");
+       
+       exec("MCP-Reborn/", "rm", "-rf", ".git/");
+       exec("MCP-Reborn/", "rm", "-rf", ".gitignore");
+       exec("MCP-Reborn/", "git", "init");
+       exec("MCP-Reborn/", "git", "add", ".");
+       
+       exec("MCP-Reborn/", "git", "commit", "-m", "Base", "--author=Mojang <noreply@mojang.com>");
+       
+       println("Commit Loader...");
+       
+       exec(".", "cp", "-rf", "src/", "MCP-Reborn/");
+       exec("MCP-Reborn/", "git", "add", ".");
+       
+       exec("MCP-Reborn/", "git", "commit", "-m", "Loader", "--author=MarkusTieger <markustieger@gmail.com>");
+       
+       // def patch = exec("MCP-Reborn/", "git", "rev-parse", "--short", "HEAD");
+       
+       // println("Patch: " + patch);
+       
+       println("Creating Patches...");
+       
+       exec("MCP-Reborn/", "git", "format-patch", "--root");
+       
+       exec("MCP-Reborn/", "cp", "0002-Loader.patch", base);
+       
+       println("Cleaning...");
+       
+       exec(".", "rm", "-rf", "MCP-Reborn/");
+       exec(".", "rm", "-rf", "MCP-Reborn/");
+       exec(".", "rm", "-rf", "MCP-Reborn/");
+    }
+    
+    def exec(String dir, String... args) {
+    	try {
+    		def p = new ProcessBuilder(args).inheritIO().directory(new File(dir)).start();
+    		
+    		// byte[] data = p.getInputStream().readAllBytes();
+    		
+    		p.waitFor();
+    		
+    		// return new String(data, "UTF-8");
+    	} catch (Throwable ex) {
+    		ex.printStackTrace();
+    	}
+    	// return null;
+    }
+    
+}
+
+// Create a task using the task type
+tasks.register('genPatch', GeneratePatch) {
+	group = 'patch'
+    description = 'creates for GitHub Patch'
+}
+
+project(':mcp') {
+    apply plugin: 'net.minecraftforge.gradle.mcp'
+    mcp {
+        config = minecraft_version + '-' + mcp_version
+        pipeline = 'joined'
+    }
+}
+
+evaluationDependsOn(':mcp')
+
+patcher {
+    parent = project(':mcp')
+    patchedSrc = file('src/main/java')
+    mappings channel: mappings_channel, version: mappings_version
+    mcVersion = minecraft_version
+}
+
+
+jar {
+    configurations.shade.each { dep ->
+        from(project.zipTree(dep)) {
+            exclude 'META-INF', 'META-INF/**'
+        }
+    }
+}
+
+task runclient(type: JavaExec) {
+    group = "MCP"
+    description = "Runs the client"
+    classpath sourceSets.main.runtimeClasspath
+    if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+        jvmArgs '-XstartOnFirstThread'
+    }
+    args '--gameDir', '.'
+    args '--version', minecraft_version
+    args '--assetsDir', downloadAssets.output
+    args '--assetIndex', "1.18"
+    args '--accessToken', '0'
+    main 'net.minecraft.client.main.Main'
+    workingDir 'run'
+}
+
+task setup() {
+    group = "MCP"
+    description = "Setups the dev workspace"
+    dependsOn ':extractMapped'
+    mkdir 'run/assets'
+    copy {
+        from downloadAssets.output.path
+        into 'run/assets'
+    }
+}
+
+task copyAssets {
+    group = "MCP"
+    description = "Download and place the assets into the run folder"
+    dependsOn ':downloadAssets'
+    mkdir 'run/assets'
+    copy {
+        from downloadAssets.output.path
+        into 'run/assets'
+    }
+}
+
+idea.project.settings {
+    runConfigurations {
+        "Minecraft"(Application) {
+            mainClass = 'mcp.client.Start'
+            workingDirectory = "$projectDir/run"
+            moduleName = idea.module.name + '.main'
+        }
+    }
+}

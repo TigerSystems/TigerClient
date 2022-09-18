@@ -1,0 +1,87 @@
+{
+  "accepted": "1",
+  "modules": {
+    "TigerClient": {
+      "enabled": true
+    },
+    "animation": {
+      "enabled": true
+    },
+    "FPS": {
+      "enabled": true,
+      "position": {
+        "x": 0.00791146012294431,
+        "y": 0.011217516732636152
+      },
+      "shadow": false
+    },
+    "CPS": {
+      "enabled": true,
+      "position": {
+        "x": 0.00891818576388889,
+        "y": 0.07368082421387671
+      }
+    },
+    "ArmorStatus": {
+      "enabled": false,
+      "Boots": {
+        "position": {
+          "x": 0.5,
+          "y": 0.5
+        }
+      },
+      "Leggings": {
+        "position": {
+          "x": 0.5,
+          "y": 0.5
+        }
+      },
+      "Chestplate": {
+        "position": {
+          "x": 0.5,
+          "y": 0.5
+        }
+      },
+      "Helmet": {
+        "position": {
+          "x": 0.5,
+          "y": 0.5
+        }
+      },
+      "shadow": false
+    },
+    "ArrowStatus": {
+      "enabled": false,
+      "position": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "SoupStatus": {
+      "enabled": false,
+      "position": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "ResourceMonitor": {
+      "enabled": true,
+      "position": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "shadow": true
+    },
+    "4th-perspective": {
+      "enabled": false
+    }
+  },
+  "plugins": {
+    "TextComponent{text\u003d\u0027Dummy Plugin\u0027, siblings\u003d[], style\u003dStyle{ color\u003dnull, bold\u003dnull, italic\u003dnull, underlined\u003dnull, strikethrough\u003dnull, obfuscated\u003dnull, clickEvent\u003dnull, hoverEvent\u003dnull, insertion\u003dnull, font\u003dminecraft:default}}": {
+      "1.0": false
+    },
+    "dummy": {
+      "1.0": false
+    }
+  }
+}

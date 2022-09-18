@@ -1,0 +1,5 @@
+rootProject.name = '05 Vanilla Compatiblity'
+
+include ':client'
+project(":client").projectDir = file("../../client")
+project(":client").name = "00 Client"

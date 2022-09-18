@@ -1,0 +1,106 @@
+{
+  "forge": {
+    "all": [],
+    "obf": [
+      {
+        "name": "client/obf/client",
+        "type": "jar"
+      },
+      {
+        "name": "client/obf/tac",
+        "type": "jar"
+      },
+      {
+        "name": "client/obf/common",
+        "type": "jar"
+      },
+      {
+        "name": "client/obf/annotations",
+        "type": "jar"
+      },
+      {
+        "name": "client/obf/forge_executor",
+        "type": "jar"
+      }
+    ],
+    "def": [
+      {
+        "name": "client/def/forge_executor",
+        "type": "jar"
+      }
+    ]
+  },
+  "vanilla": {
+    "all": [],
+    "obf": [
+      {
+        "name": "client/obf_vanilla/client",
+        "type": "jar"
+      },
+      {
+        "name": "client/obf_vanilla/tac",
+        "type": "jar"
+      },
+      {
+        "name": "client/obf_vanilla/common",
+        "type": "jar"
+      },
+      {
+        "name": "client/obf_vanilla/annotations",
+        "type": "jar"
+      },
+      {
+        "name": "client/obf_vanilla/vanilla_executor",
+        "type": "jar"
+      }
+    ],
+    "def": [
+      {
+        "name": "client/def/vanilla_executor",
+        "type": "jar"
+      }
+    ]
+  },
+  "version": "2.8.3",
+  "all": [
+    {
+      "name": "client/lang",
+      "type": "zip"
+    },
+    {
+      "name": "client/textures",
+      "type": "zip"
+    },
+    {
+      "name": "client/textures",
+      "type": "zip"
+    },
+    {
+      "name": "client/cosmetics/sector0",
+      "type": "zip"
+    },
+    {
+      "name": "client/cosmetics/sector1",
+      "type": "zip"
+    }
+  ],
+  "obf": [],
+  "def": [
+    {
+      "name": "client/def/client",
+      "type": "jar"
+    },
+    {
+      "name": "client/def/tac",
+      "type": "jar"
+    },
+    {
+      "name": "client/def/common",
+      "type": "jar"
+    },
+    {
+      "name": "client/def/annotations",
+      "type": "jar"
+    }
+  ]
+}

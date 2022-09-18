@@ -1,0 +1,123 @@
+---- Minecraft Crash Report ----
+// I feel sad now :(
+
+Time: 06.07.22, 19:12
+Description: Mod loading error has occurred
+
+java.lang.Exception: Mod Loading has failed
+	at net.minecraftforge.fmllegacy.CrashReportExtender.dumpModLoadingCrashReport(CrashReportExtender.java:69) ~[forge-1.17.1-37.1.0_mapped_official_1.17.1-recomp.jar%2374%2381!:?] {re:classloading}
+	at net.minecraftforge.fmlclient.ClientModLoader.completeModLoading(ClientModLoader.java:185) ~[forge-1.17.1-37.1.0_mapped_official_1.17.1-recomp.jar%2374%2381!:?] {re:classloading,pl:runtimedistcleaner:A}
+	at net.minecraft.client.Minecraft.lambda$new$1(Minecraft.java:555) ~[forge-1.17.1-37.1.0_mapped_official_1.17.1-recomp.jar%2375!:?] {re:classloading,pl:accesstransformer:B,pl:runtimedistcleaner:A}
+	at net.minecraft.Util.ifElse(Util.java:361) ~[forge-1.17.1-37.1.0_mapped_official_1.17.1-recomp.jar%2375!:?] {re:classloading}
+	at net.minecraft.client.Minecraft.lambda$new$2(Minecraft.java:549) ~[forge-1.17.1-37.1.0_mapped_official_1.17.1-recomp.jar%2375!:?] {re:classloading,pl:accesstransformer:B,pl:runtimedistcleaner:A}
+	at net.minecraft.client.gui.screens.LoadingOverlay.render(LoadingOverlay.java:135) ~[forge-1.17.1-37.1.0_mapped_official_1.17.1-recomp.jar%2375!:?] {re:classloading,pl:runtimedistcleaner:A}
+	at net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:874) ~[forge-1.17.1-37.1.0_mapped_official_1.17.1-recomp.jar%2375!:?] {re:classloading,pl:accesstransformer:B,pl:runtimedistcleaner:A}
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1039) ~[forge-1.17.1-37.1.0_mapped_official_1.17.1-recomp.jar%2375!:?] {re:classloading,pl:accesstransformer:B,pl:runtimedistcleaner:A}
+	at net.minecraft.client.Minecraft.run(Minecraft.java:659) ~[forge-1.17.1-37.1.0_mapped_official_1.17.1-recomp.jar%2375!:?] {re:classloading,pl:accesstransformer:B,pl:runtimedistcleaner:A}
+	at net.minecraft.client.main.Main.main(Main.java:186) ~[forge-1.17.1-37.1.0_mapped_official_1.17.1-recomp.jar%2375!:?] {re:classloading,pl:runtimedistcleaner:A}
+	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:?] {}
+	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:78) ~[?:?] {}
+	at jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:?] {}
+	at java.lang.reflect.Method.invoke(Method.java:567) ~[?:?] {}
+	at net.minecraftforge.fml.loading.targets.ForgeClientUserdevLaunchHandler.lambda$launchService$0(ForgeClientUserdevLaunchHandler.java:38) ~[fmlloader-1.17.1-37.1.0.jar%233!:?] {}
+	at cpw.mods.modlauncher.LaunchServiceHandlerDecorator.launch(LaunchServiceHandlerDecorator.java:37) [modlauncher-9.0.24.jar%238!:?] {}
+	at cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:53) [modlauncher-9.0.24.jar%238!:?] {}
+	at cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:71) [modlauncher-9.0.24.jar%238!:?] {}
+	at cpw.mods.modlauncher.Launcher.run(Launcher.java:106) [modlauncher-9.0.24.jar%238!:?] {}
+	at cpw.mods.modlauncher.Launcher.main(Launcher.java:77) [modlauncher-9.0.24.jar%238!:?] {}
+	at cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:26) [modlauncher-9.0.24.jar%238!:?] {}
+	at cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:23) [modlauncher-9.0.24.jar%238!:?] {}
+	at cpw.mods.bootstraplauncher.BootstrapLauncher.main(BootstrapLauncher.java:90) [bootstraplauncher-0.1.17.jar:?] {}
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at com.mojang.blaze3d.systems.RenderSystem.assertThread(RenderSystem.java:122) ~[forge-1.17.1-37.1.0_mapped_official_1.17.1-recomp.jar%2375!:?] {re:classloading,pl:runtimedistcleaner:A}
+-- MOD tigerclient --
+Details:
+	Mod File: main
+	Failure message: TigerClient (tigerclient) encountered an error during the sided_setup event phase
+		java.lang.IllegalStateException: Rendersystem called from wrong thread
+	Mod Version: 0.0.0
+	Mod Issue URL: NOT PROVIDED
+	Exception message: java.lang.IllegalStateException: Rendersystem called from wrong thread
+Stacktrace:
+	at com.mojang.blaze3d.systems.RenderSystem.assertThread(RenderSystem.java:122) ~[forge-1.17.1-37.1.0_mapped_official_1.17.1-recomp.jar%2375!:?] {re:classloading,pl:runtimedistcleaner:A}
+	at net.minecraft.client.renderer.texture.AbstractTexture.getId(AbstractTexture.java:54) ~[forge-1.17.1-37.1.0_mapped_official_1.17.1-recomp.jar%2375!:?] {re:classloading,pl:runtimedistcleaner:A}
+	at net.minecraft.client.gui.font.FontTexture.<init>(FontTexture.java:29) ~[forge-1.17.1-37.1.0_mapped_official_1.17.1-recomp.jar%2375!:?] {re:classloading,pl:runtimedistcleaner:A}
+	at net.minecraft.client.gui.font.FontSet.stitch(FontSet.java:134) ~[forge-1.17.1-37.1.0_mapped_official_1.17.1-recomp.jar%2375!:?] {re:classloading,pl:runtimedistcleaner:A}
+	at net.minecraft.client.gui.font.FontSet.reload(FontSet.java:55) ~[forge-1.17.1-37.1.0_mapped_official_1.17.1-recomp.jar%2375!:?] {re:classloading,pl:runtimedistcleaner:A}
+	at de.MarkusTieger.tigerclient.loader.overlay.AdvancedFontManager.lambda$7(AdvancedFontManager.java:182) ~[%2379!:?] {re:classloading}
+	at net.minecraft.Util.make(Util.java:306) ~[forge-1.17.1-37.1.0_mapped_official_1.17.1-recomp.jar%2375!:?] {re:classloading}
+	at de.MarkusTieger.tigerclient.loader.overlay.AdvancedFontManager.<init>(AdvancedFontManager.java:181) ~[%2379!:?] {re:classloading}
+	at de.MarkusTieger.tigerclient.forge.ForgeMod.doClientStuff(ForgeMod.java:113) ~[%2379!:?] {re:classloading}
+	at net.minecraftforge.eventbus.EventBus.doCastFilter(EventBus.java:247) ~[eventbus-5.0.7.jar%237!:?] {}
+	at net.minecraftforge.eventbus.EventBus.lambda$addListener$11(EventBus.java:239) ~[eventbus-5.0.7.jar%237!:?] {}
+	at net.minecraftforge.eventbus.EventBus.post(EventBus.java:302) ~[eventbus-5.0.7.jar%237!:?] {}
+	at net.minecraftforge.eventbus.EventBus.post(EventBus.java:283) ~[eventbus-5.0.7.jar%237!:?] {}
+	at net.minecraftforge.fml.javafmlmod.FMLModContainer.acceptEvent(FMLModContainer.java:120) ~[javafmllanguage-1.17.1-37.1.0.jar%2376!:?] {}
+	at net.minecraftforge.fml.ModContainer.lambda$buildTransitionHandler$4(ModContainer.java:121) ~[fmlcore-1.17.1-37.1.0.jar%2378!:?] {}
+	at java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1800) ~[?:?] {}
+	at java.util.concurrent.CompletableFuture$AsyncRun.exec(CompletableFuture.java:1792) ~[?:?] {}
+	at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:295) ~[?:?] {}
+	at java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1016) ~[?:?] {}
+	at java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1665) ~[?:?] {}
+	at java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1598) ~[?:?] {}
+	at java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:183) ~[?:?] {}
+
+
+-- System Details --
+Details:
+	Minecraft Version: 1.17.1
+	Minecraft Version ID: 1.17.1
+	Operating System: Linux (amd64) version 5.18.0-9.1-liquorix-amd64
+	Java Version: 16.0.1, Private Build
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Private Build
+	Memory: 7755393264 bytes (7396 MiB) / 8589934592 bytes (8192 MiB) up to 8589934592 bytes (8192 MiB)
+	CPUs: 12
+	Processor Vendor: AuthenticAMD
+	Processor Name: AMD Ryzen 5 5600X 6-Core Processor
+	Identifier: AuthenticAMD Family 25 Model 33 Stepping 0
+	Microarchitecture: Zen 3
+	Frequency (GHz): 4,65
+	Number of physical packages: 1
+	Number of physical CPUs: 6
+	Number of logical CPUs: 12
+	Graphics card #0 name: GM204 [GeForce GTX 980]
+	Graphics card #0 vendor: NVIDIA Corporation (0x10de)
+	Graphics card #0 VRAM (MB): 288,00
+	Graphics card #0 deviceId: 0x13c0
+	Graphics card #0 versionInfo: unknown
+	Virtual memory max (MB): 138085,31
+	Virtual memory used (MB): 19264,44
+	Swap memory total (MB): 122070,00
+	Swap memory used (MB): 3,50
+	JVM Flags: 3 total; -Xms8G -Xmx8G -XX:+ShowCodeDetailsInExceptionMessages
+	ModLauncher: 9.0.24+9.0.24+main.7be9f01d
+	ModLauncher launch target: forgeclientuserdev
+	ModLauncher naming: mcp
+	ModLauncher services: 
+		 mixin PLUGINSERVICE 
+		 eventbus PLUGINSERVICE 
+		 object_holder_definalize PLUGINSERVICE 
+		 runtime_enum_extender PLUGINSERVICE 
+		 capability_token_subclass PLUGINSERVICE 
+		 capability_inject_definalize PLUGINSERVICE 
+		 accesstransformer PLUGINSERVICE 
+		 runtimedistcleaner PLUGINSERVICE 
+		 mixin TRANSFORMATIONSERVICE 
+		 fml TRANSFORMATIONSERVICE 
+	FML Language Providers: 
+		minecraft@1.0
+		javafml@null
+	Mod List: 
+		forge-1.17.1-37.1.0_mapped_official_1.17.1-recomp.|Minecraft                     |minecraft                     |1.17.1              |ENQUEUE_IM|Manifest: a1:d4:5e:04:4f:d3:d6:e0:7b:37:97:cf:77:b0:de:ad:4a:47:ce:8c:96:49:5f:0a:cf:8c:ae:b2:6d:4b:8a:3f
+		                                                  |Forge                         |forge                         |37.1.0              |ENQUEUE_IM|Manifest: NOSIGNATURE
+		main                                              |TigerClient Loader            |tc_loader                     |1.2.0               |ENQUEUE_IM|Manifest: NOSIGNATURE
+	Crash Report UUID: bb40532d-2b6f-4ed3-8fca-a307005c9aed
+	FML: 37.1
+	Forge: net.minecraftforge:37.1.0

@@ -1,0 +1,12 @@
+{
+	"main": "dummy",
+	"id": "dummy",
+	"version": "1.0",
+	"author": "MarkusTieger",
+	"authors": [],
+	"name": "Dummy Plugin",
+	"description": "A Simple Plugin",
+	"permissions": [],
+	"minVersion": 1,
+	"maxVersion": 1
+}
