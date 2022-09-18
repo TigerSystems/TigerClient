@@ -94,6 +94,8 @@ abstract class GeneratePatch extends DefaultTask {
        
        println("Commit Loader...");
        
+       exec(".", "cp", "-f", ".gitignore", "MCP-Reborn/");
+       
        exec(".", "cp", "-rf", "src/", "MCP-Reborn/");
        exec("MCP-Reborn/", "git", "add", ".");
        
@@ -117,6 +119,7 @@ abstract class GeneratePatch extends DefaultTask {
     }
     
     def exec(String dir, String... args) {
+    	// if(dir.equalsIgnoreCase(".")) dir = "/media/markustieger/Samsung-2TB/Eclipse/Projects/internal/new/Java/17.09.22-TigerClient/07 Loader Vanilla";
     	try {
     		def p = new ProcessBuilder(args).inheritIO().directory(new File(dir)).start();
     		
@@ -139,7 +142,7 @@ tasks.register('genPatch', GeneratePatch) {
     description = 'creates for GitHub Patch'
 }
 
-project(':mcp') {
+project(':07 Loader Vanilla - MCP') {
     apply plugin: 'net.minecraftforge.gradle.mcp'
     mcp {
         config = minecraft_version + '-' + mcp_version
@@ -147,10 +150,10 @@ project(':mcp') {
     }
 }
 
-evaluationDependsOn(':mcp')
+evaluationDependsOn(':07 Loader Vanilla - MCP')
 
 patcher {
-    parent = project(':mcp')
+    parent = project(':07 Loader Vanilla - MCP')
     patchedSrc = file('src/main/java')
     mappings channel: mappings_channel, version: mappings_version
     mcVersion = minecraft_version

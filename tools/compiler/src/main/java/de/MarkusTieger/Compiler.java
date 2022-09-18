@@ -1192,14 +1192,14 @@ public class Compiler {
 			
 			if(f.isDirectory()) {
 				File target = new File(to, f.getName());
-				if(!target.exists()) target.mkdir();
+				if(!target.exists()) target.mkdirs();
 				
-				System.out.println("Directory: " + f.getAbsolutePath() + " TO: " + target.getAbsolutePath() + " Exists: " + target.exists());
+				// System.out.println("Directory: " + f.getAbsolutePath() + " TO: " + target.getAbsolutePath() + " Exists: " + target.exists());
 				
 				copyDirectory(f, target);
 			}
 			if(f.isFile()) {
-				System.out.println("From: " + f.getAbsolutePath() + " To: " + to.getAbsolutePath() + " / " + f.getName());
+				// System.out.println("From: " + f.getAbsolutePath() + " To: " + to.getAbsolutePath() + " / " + f.getName());
 				copy(f, new File(to, f.getName()));
 			}
 			
