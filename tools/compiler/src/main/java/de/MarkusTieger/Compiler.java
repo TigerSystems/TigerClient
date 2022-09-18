@@ -29,7 +29,6 @@ import de.MarkusTieger.AbstractConfig.DownloadableFile;
 import de.MarkusTieger.AbstractConfig.LoaderConfig;
 import de.MarkusTieger.obf.ObfuscationConfig;
 import de.MarkusTieger.obf.Obfuscator;
-import javafx.util.Pair;
 
 public class Compiler {
 
