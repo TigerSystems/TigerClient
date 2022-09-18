@@ -88,6 +88,7 @@ public class Compiler {
     	List<File> signs = new ArrayList<>();
     	AbstractConfig.LoaderConfig.RootLoaderConfig loader_config = new AbstractConfig.LoaderConfig.RootLoaderConfig();
     	
+    	System.out.println("Getting Minecraft and Forge version...");
     	
     	Pair<String, String> mc_version = fetchMCVersion();
     	
@@ -807,6 +808,9 @@ public class Compiler {
         fos.flush();
         fos.close();
         
+        System.out.println("Compiling Installer...");
+        
+        compileInstaller(output);
         
         System.out.println("Finish!\n");
         
@@ -830,7 +834,24 @@ public class Compiler {
         System.out.println("Java: " + System.getProperty("java.version", "Unknown"));
     }
     
-    private static Pair<String, String> fetchMCVersion() {
+    private static void compileInstaller(File output) throws InterruptedException, IOException {
+		File tools = new File(output, "tools");
+		if(!tools.exists()) tools.mkdirs();
+		
+		File installer = new File("../installer");
+		if(!installer.exists()) installer.mkdirs();
+		
+		ProcessBuilder builder = new ProcessBuilder("./gradlew", "-Dgradle.user.home=../../data/gradle", "build", "shadowJar");
+		builder.directory(installer);
+		builder.start().waitFor();
+		
+		File target = new File(installer, "build/libs/Installer-all.jar");
+		if(!target.exists()) throw new RuntimeException("Installer Shadow Jar does not exists.");
+		
+		target.renameTo(new File(tools, "Installer.jar"));
+	}
+
+	private static Pair<String, String> fetchMCVersion() {
 		
     	ProcessBuilder builder = new ProcessBuilder("./gradlew", "-Dgradle.user.home=../../data/gradle", "build");
     	builder.directory(new File("."));
