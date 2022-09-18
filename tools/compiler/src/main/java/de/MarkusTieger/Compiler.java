@@ -1108,23 +1108,24 @@ public class Compiler {
     	builder = new ProcessBuilder("git", "apply", "../0002-Loader.patch");
     	builder.inheritIO().directory(reborn).start().waitFor();
     	
+    	File src = new File(reborn, "src");
+    	if(!src.exists()) src.mkdirs();
+    	
+    	builder = new ProcessBuilder("rm", "-rf", "common");
+    	builder.inheritIO().directory(src).start().waitFor();
+    	
+    	builder = new ProcessBuilder("ln", "-s", "../../common/src/main", "common");
+    	builder.inheritIO().directory(src).start().waitFor();
+    	
     	System.out.println("Building...");
     	
     	builder = new ProcessBuilder("./gradlew", "-Dgradle.user.home=../../../data/gradle", "build");
-    	builder.inheritIO().directory(reborn);
+    	builder.inheritIO().directory(reborn).start().waitFor();
     	
     	// copyCommonLoader(baseDir);
     	
-    	try {
-			builder.start().waitFor();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    	
     	File f = new File(reborn, "build/libs/");
-    	if(!f.exists() || !f.isDirectory()) throw new RuntimeException("Vanilla Client (Deobf) Jar does not exists or is not a directory.");
+    	if(!f.exists() || !f.isDirectory()) throw new RuntimeException("Vanilla Client (Deobf) Jar-Directory does not exists or is not a directory.");
     	File[] list = f.listFiles();
     	if(list.length == 0) throw new RuntimeException("Libs directory is empty.");
     	File target = list[0];
