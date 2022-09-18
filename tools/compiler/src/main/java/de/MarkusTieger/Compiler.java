@@ -20,6 +20,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import javax.management.RuntimeErrorException;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -1109,7 +1111,7 @@ public class Compiler {
     	System.out.println("Building...");
     	
     	builder = new ProcessBuilder("./gradlew", "-Dgradle.user.home=../../../data/gradle", "build");
-    	builder.directory(reborn);
+    	builder.inheritIO().directory(reborn);
     	
     	// copyCommonLoader(baseDir);
     	
@@ -1121,10 +1123,14 @@ public class Compiler {
 			e.printStackTrace();
 		}
     	
-    	File f = new File(reborn, "build/libs/07 Loader Vanilla-1.0.0.jar");
-    	if(!f.exists()) throw new RuntimeException("Vanilla Client (Deobf) Jar does not exists.");
+    	File f = new File(reborn, "build/libs/");
+    	if(!f.exists() || !f.isDirectory()) throw new RuntimeException("Vanilla Client (Deobf) Jar does not exists or is not a directory.");
+    	File[] list = f.listFiles();
+    	if(list.length == 0) throw new RuntimeException("Libs directory is empty.");
+    	File target = list[0];
+    	if(!target.isFile()) throw new RuntimeException("File \"" + target.getName() + "\" is not a File.");
     	
-    	f.renameTo(vanillaJar);
+    	target.renameTo(vanillaJar);
     	
     	builder = new ProcessBuilder("rm", "-rf", reborn.getName() + "/");
     	builder.inheritIO().directory(baseDir).start().waitFor();
