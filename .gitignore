@@ -17,3 +17,4 @@ tools/compiler/source*
 **/*.log
 **/logs/
 **/saves/
+**/MCP-Reborn/
