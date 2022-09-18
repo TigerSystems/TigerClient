@@ -1196,6 +1196,7 @@ public class Compiler {
 				copyDirectory(f, target);
 			}
 			if(f.isFile()) {
+				System.out.println("From: " + f.getAbsolutePath() + " To: " + to.getAbsolutePath() + " / " + f.getName());
 				copy(f, new File(to, f.getName()));
 			}
 			
