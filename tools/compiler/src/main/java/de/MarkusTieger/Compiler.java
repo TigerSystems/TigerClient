@@ -1113,7 +1113,7 @@ public class Compiler {
     	
     	System.out.println("Copying Common Loader...");
     	
-    	copyDirectory(new File("../../loader/common/src/java"), new File(src, "common"));
+    	copyDirectory(new File("../../loader/common/src/main"), new File(src, "common"));
     	
     	System.out.println("Building...");
     	
