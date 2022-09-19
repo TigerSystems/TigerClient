@@ -65,7 +65,7 @@ abstract class GeneratePatch extends DefaultTask {
     @TaskAction
     def gen_patch() {
        
-       def minecraft_version = "1.18.2";
+       def minecraft_version = project.property("net.minecraft.version");
        def base = "/media/markustieger/Samsung-2TB/Eclipse/Projects/external/Git/TigerClient/loader/vanilla";
        
        println("Preparing...");
@@ -121,7 +121,7 @@ abstract class GeneratePatch extends DefaultTask {
     def exec(String dir, String... args) {
     	// if(dir.equalsIgnoreCase(".")) dir = "/media/markustieger/Samsung-2TB/Eclipse/Projects/internal/new/Java/17.09.22-TigerClient/07 Loader Vanilla";
     	try {
-    		def p = new ProcessBuilder(args).inheritIO().directory(new File(dir)).start();
+    		def p = new ProcessBuilder(args).inheritIO().directory(new File(project.rootDir, dir)).start();
     		
     		// byte[] data = p.getInputStream().readAllBytes();
     		
