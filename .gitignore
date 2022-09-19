@@ -17,7 +17,8 @@ tools/compiler/source*
 **/logs/
 **/saves/
 **/MCP-Reborn/
-loader/forge/run/TigerClient/
+loader/forge/run/TigerClient/*
+!loader/forge/run/TigerClient/debug
 
 
 data/gradle/*
