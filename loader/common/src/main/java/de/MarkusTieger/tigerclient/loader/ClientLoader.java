@@ -18,21 +18,29 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang3.function.TriFunction;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import de.MarkusTieger.common.FourConsumer;
 import de.MarkusTieger.common.FourFunction;
 import de.MarkusTieger.common.ILoader;
 import de.MarkusTieger.tigerclient.CanceledScreen;
+import de.MarkusTieger.tigerclient.loader.AbstractConfig.LoaderConfig;
+import de.MarkusTieger.tigerclient.loader.plmgr.PluginManagerInjector;
 import de.MarkusTieger.tigerclient.recovery.RecoveryManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -66,10 +74,12 @@ public class ClientLoader implements ILoader {
     private FourFunction<Screen, List<GuiEventListener>, Consumer<GuiEventListener>, Consumer<GuiEventListener>, Boolean> screenPre = (sc, list, add, remove) -> false;
     private FourConsumer<Screen, List<GuiEventListener>, Consumer<GuiEventListener>, Consumer<GuiEventListener>> screenPost = (sc, list, add, remove) -> {};
 
-    private final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private VersionInformation info = null;
     private BiConsumer<String, Float> progress;
 
+    private ClientClassLoader loader = null;
+    
     @SuppressWarnings("resource")
 	@Override
     public void initialize(String modid, BiConsumer<String, Float> consumer, ClientType type) {
@@ -108,6 +118,10 @@ public class ClientLoader implements ILoader {
 
         System.out.println("Configuration found: " + cfg);
 
+        File extensions = new File(directory, "extensions.json");
+        Predicate<Map.Entry<String, LoaderConfig>> extension_filter = loadExtensionFilter(extensions);
+        
+        
         progress.accept("Building File-List...", 0.03125F);
 
         try {
@@ -144,6 +158,19 @@ public class ClientLoader implements ILoader {
             } else if(type == ClientType.VANILLA) {
                 files_.addAll(cfg.vanilla.all);
                 files_.addAll(obf ? cfg.vanilla.obf : cfg.vanilla.def);
+            }
+            
+            for(LoaderConfig enabled_extensions : cfg.extensions.entrySet().stream().filter(extension_filter).map(Map.Entry::getValue).toList()) {
+            	files_.addAll(enabled_extensions.all);
+                files_.addAll(obf ? enabled_extensions.obf : enabled_extensions.def);
+
+                if(type == ClientType.FORGE){
+                    files_.addAll(enabled_extensions.forge.all);
+                    files_.addAll(obf ? enabled_extensions.forge.obf : enabled_extensions.forge.def);
+                } else if(type == ClientType.VANILLA) {
+                    files_.addAll(enabled_extensions.vanilla.all);
+                    files_.addAll(obf ? enabled_extensions.vanilla.obf : enabled_extensions.vanilla.def);
+                }
             }
 
             progress.accept("Checking Files...", 0.03125F * 2F);
@@ -230,7 +257,7 @@ public class ClientLoader implements ILoader {
 
             progress.accept("Initializing Client...", (0.03125F * 14F));
 
-            ClientClassLoader loader = new ClientClassLoader(verify, sources.toArray(new URL[0]));
+            loader = new ClientClassLoader(verify, sources.toArray(new URL[0]));
 
             Class<?> comp = Class.forName(type.getExecutor(), true, loader);
             Constructor<?> compConstruct = comp.getDeclaredConstructor(String.class, Runnable.class);
@@ -264,7 +291,7 @@ public class ClientLoader implements ILoader {
                     // Making Manipulated Consumer
                     BiConsumer<String, Float> c = (str, f) -> {
                     	if(f == Float.NaN && str == null) {
-                    		ClientLoader.this.injectPluginManager();
+                    		PluginManagerInjector.injectPluginManager(loader);
                     		return;
                     	}
                     	if(f != -1F) f = 0.5F + (f / 2F);
@@ -442,9 +469,31 @@ public class ClientLoader implements ILoader {
         }
     }
 
-    private void injectPluginManager() {
-		// TODO Auto-generated method stub
-		
+    
+
+	private Predicate<Entry<String, LoaderConfig>> loadExtensionFilter(File extensions) {
+    	Predicate<Map.Entry<String, LoaderConfig>> extension_filter = (e) -> false;
+    	
+    	if(!extensions.exists()) return extension_filter;
+    	if(extensions.length() > 8192) return extension_filter;
+    	
+    	try (FileInputStream in = new FileInputStream(extensions)) {
+    		byte[] data = in.readAllBytes();
+    		
+    		JsonArray array = GSON.fromJson(new String(data, StandardCharsets.UTF_8), JsonArray.class);
+    		
+    		List<JsonElement> ext0 = new ArrayList<>();
+    		array.forEach(ext0::add);
+    		
+    		List<String> ext = ext0.stream().filter(JsonElement::isJsonPrimitive).map((e) -> (JsonPrimitive)e).filter(JsonPrimitive::isString).map(JsonPrimitive::getAsString).toList();
+    		
+    		extension_filter = (e) -> ext.stream().anyMatch(e.getKey()::equalsIgnoreCase);
+    		
+    	} catch (Throwable ex) {
+    		ex.printStackTrace();
+    	}
+    	
+		return extension_filter;
 	}
 
 	private void saveConfig(File loadercfg) {
@@ -511,7 +560,7 @@ public class ClientLoader implements ILoader {
         return null;*/
     }
 
-    private AbstractConfig.LoaderConfig cfg = null;
+    private AbstractConfig.RootLoaderConfig cfg = null;
 
     private void loadConfig(File loadercfg) {
         try {
@@ -532,7 +581,7 @@ public class ClientLoader implements ILoader {
 
     private void loadConfig(InputStream in){
         try {
-            cfg = GSON.fromJson(new InputStreamReader(in, StandardCharsets.UTF_8), AbstractConfig.LoaderConfig.class);
+            cfg = GSON.fromJson(new InputStreamReader(in, StandardCharsets.UTF_8), AbstractConfig.RootLoaderConfig.class);
         } catch(Exception e){
             e.printStackTrace();
         }

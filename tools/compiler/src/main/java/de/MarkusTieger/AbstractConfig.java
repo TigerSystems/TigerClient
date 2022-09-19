@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 
 public class AbstractConfig {
 
-    public String version = null;
-
     public ArrayList<DownloadableFile> all = new ArrayList<DownloadableFile>();
     public ArrayList<DownloadableFile> obf = new ArrayList<DownloadableFile>();
     public ArrayList<DownloadableFile> def = new ArrayList<DownloadableFile>();
@@ -45,6 +43,8 @@ public class AbstractConfig {
     }
     
     public static class RootLoaderConfig extends LoaderConfig {
+    	
+    	public String version = null;
     	
     	public LinkedTreeMap<String, LoaderConfig> extensions = new LinkedTreeMap<>();
     	

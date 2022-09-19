@@ -24,6 +24,11 @@ public class ClientClassLoader extends URLClassLoader {
             return parent.loadClass(name);
         }
     }
+    
+    @Override
+    public URL getResource(String name) {
+    	return super.getResource(name);
+    }
 
     @Override
     public void addURL(URL url) {

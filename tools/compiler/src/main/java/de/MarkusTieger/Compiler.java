@@ -1,8 +1,21 @@
 package de.MarkusTieger;
 
-import static de.MarkusTieger.obf.ObfuscationConfig.*;
+import static de.MarkusTieger.obf.ObfuscationConfig.DONT_NOTE;
+import static de.MarkusTieger.obf.ObfuscationConfig.DONT_OPTIMIZE;
+import static de.MarkusTieger.obf.ObfuscationConfig.DONT_SHRINK;
+import static de.MarkusTieger.obf.ObfuscationConfig.DONT_WARN;
+import static de.MarkusTieger.obf.ObfuscationConfig.FORCE_PROCESSING;
+import static de.MarkusTieger.obf.ObfuscationConfig.IGNORE_WARNINGS;
+import static de.MarkusTieger.obf.ObfuscationConfig.KEEP_ALL_ATTRIBUTES;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -19,8 +32,6 @@ import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-
-import javax.management.RuntimeErrorException;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
