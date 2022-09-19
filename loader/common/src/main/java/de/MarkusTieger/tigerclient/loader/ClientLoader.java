@@ -534,7 +534,7 @@ public class ClientLoader implements ILoader {
 	private URLConnection getConnection(String name, String type) {
         if(new File(directory, "debug").exists()) {
             try {
-                URLConnection con = new File("../../data/compiled/", name.toLowerCase() + "." + type).toURL().openConnection();
+                URLConnection con = new File("../../../data/compiled/", name.toLowerCase() + "." + type).toURL().openConnection();
                 return con;
             } catch (IOException e) {
                 e.printStackTrace();
