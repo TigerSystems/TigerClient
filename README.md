@@ -44,6 +44,7 @@ The Result is in the directory "data/compiled" inside the Repository.<br /><br /
 ## The Vanilla Loader
 When you wish to modify the Vanilla Loader, clone the MCP-Reborn repository, run the "setup" task and overwrite the build.gradle and the settings.gradle with the files from the "loader/vanilla" directory inside the Repository. Then you delete the Local Git Repository using `rm -rf .git` and initializes a new one with `git init`. Then you apply the Patch which is in the "loader/vanilla" directory inside the Repository using `git apply \<path to file>`. Now you can edit the Vanilla Loader. When you wish to create a patch from the Loader, you should change the variable "base" in the "build.gradle" in the section for the task "genPatch" to "\<tigerclient git repository path>/loader/vanilla". Now you can run `./gradlew genPatch` and the patch in the Repository will be overwriten.
 <br /><br />
+
 ## FAQ
 
 **Why i must Patch the Vanilla Loader and not uploading it to Github?**<br />
@@ -57,3 +58,39 @@ I think it's a great client. It gets active support and new features and actuall
 
 <br /><br /><br />
 You have unanswered questions? [Open a issue](https://github.com/TigerSystems/TigerClient/issues/new).
+
+<br />
+
+## Open-Source Licenses
+
+<strong>Lua JSE</strong><br/>
+License: MIT License<br/>
+Project: https://luaj.sourceforge.net/<br/><br/>
+
+<strong>SQLite-JDBC</strong><br/>
+License: Apache License 2.0<br/>
+Project: https://github.com/xerial/sqlite-jdbc<br/><br/>
+
+<strong>GSON</strong><br/>
+License: Apache License 2.0<br/>
+Project: https://github.com/google/gson<br/><br/>
+
+<strong>Blossom</strong><br/>
+License: GNU LESSER GENERAL PUBLIC LICENSE 2.1<br/>
+Project: https://github.com/KyoriPowered/blossom<br/><br/>
+
+<strong>Shadow</strong><br/>
+License: Apache License 2.0<br/>
+Project: https://github.com/johnrengelman/shadow<br/><br/>
+
+<strong>Forge Gradle</strong><br/>
+License: GNU Lesser General Public License v2.1<br/>
+Project: https://github.com/MinecraftForge/ForgeGradle<br/><br/>
+
+<strong>Minecraft Forge</strong><br/>
+License: GNU LESSER GENERAL PUBLIC LICENSE 2.1<br/>
+Project: https://github.com/MinecraftForge/MinecraftForge<br/><br/>
+
+<strong>MCP Reborn</strong><br/>
+License: [Custom License](https://github.com/Hexeption/MCP-Reborn/blob/1.19/MCP-License)<br/>
+Project: https://github.com/Hexeption/MCP-Reborn/
