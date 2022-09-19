@@ -269,7 +269,6 @@ public class TigerClient extends Client
 
 		getAnimationRegistry().register("cape_tigerclient",
 				AnimationUtils.aniFrames("cosmetics/capes/tigerclient/", 120));
-		getAnimationRegistry().register("cape_kroko", AnimationUtils.aniFrames("cosmetics/capes/kroko/", 192));
 		getAnimationRegistry().register("cape_demoneye", AnimationUtils.frame("cosmetics/capes/demoneye/demoneye"));
 		getAnimationRegistry().register("elytra_demoneye", AnimationUtils.frame("cosmetics/elytras/demoneye/demoneye"));
 
