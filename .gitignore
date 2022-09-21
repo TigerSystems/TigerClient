@@ -19,6 +19,7 @@ tools/compiler/source*
 **/MCP-Reborn/
 **/TigerClient/*
 !**/TigerClient/debug
+**/sign.txt
 
 
 data/gradle/*

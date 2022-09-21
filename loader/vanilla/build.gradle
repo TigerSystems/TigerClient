@@ -97,6 +97,7 @@ abstract class GeneratePatch extends DefaultTask {
        exec(".", "cp", "-f", ".gitignore", "MCP-Reborn/");
        
        exec(".", "cp", "-rf", "src/", "MCP-Reborn/");
+       exec(".", "cp", "-rf", ".gitignore", "MCP-Reborn/");
        exec("MCP-Reborn/", "git", "add", ".");
        
        exec("MCP-Reborn/", "git", "commit", "-m", "Loader", "--author=MarkusTieger <markustieger@gmail.com>");

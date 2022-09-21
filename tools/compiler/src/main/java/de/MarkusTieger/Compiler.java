@@ -1202,7 +1202,7 @@ public class Compiler {
     	target.renameTo(vanillaJar);
     	
     	builder = new ProcessBuilder("rm", "-rf", reborn.getName() + "/");
-    	// builder.inheritIO().directory(baseDir).start().waitFor();
+    	builder.inheritIO().directory(baseDir).start().waitFor();
     	
 	}
     
