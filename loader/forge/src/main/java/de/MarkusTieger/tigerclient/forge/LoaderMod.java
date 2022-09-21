@@ -2,6 +2,7 @@ package de.MarkusTieger.tigerclient.forge;
 
 import java.util.Optional;
 
+import de.MarkusTieger.VersionPrinter;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
@@ -20,9 +21,7 @@ public class LoaderMod {
             info.getVersion().parseVersion(VERSION);
         }
         
-        final String first = "--::tc_loader=";
-		final String last = "=tc_loader::--";
-		System.out.println(first + VERSION + last);
+        VersionPrinter.__internal__();
     }
 
 }

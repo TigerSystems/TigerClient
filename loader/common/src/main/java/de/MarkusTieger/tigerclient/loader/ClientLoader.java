@@ -39,6 +39,7 @@ import de.MarkusTieger.common.FourConsumer;
 import de.MarkusTieger.common.FourFunction;
 import de.MarkusTieger.common.ILoader;
 import de.MarkusTieger.tigerclient.CanceledScreen;
+import de.MarkusTieger.tigerclient.VersionPrinter0;
 import de.MarkusTieger.tigerclient.loader.AbstractConfig.LoaderConfig;
 import de.MarkusTieger.tigerclient.loader.plmgr.PluginManagerInjector;
 import de.MarkusTieger.tigerclient.recovery.RecoveryManager;
@@ -51,11 +52,7 @@ public class ClientLoader implements ILoader {
 	public static final String VERSION = "1.0.0";
 	
 	static {
-		
-		final String first = "--::tc_common=";
-		final String last = "=tc_common::--";
-		System.out.println(first + VERSION + last);
-		
+		VersionPrinter0.__internal__();
 	}
 	
     private File directory = null;

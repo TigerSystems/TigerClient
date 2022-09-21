@@ -16,6 +16,7 @@ import java.util.function.BiConsumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.MarkusTieger.VersionPrinter;
 import de.MarkusTieger.common.Client;
 import de.MarkusTieger.common.ad.IAdManager;
 import de.MarkusTieger.common.auth.IAuthicationService;
@@ -97,10 +98,11 @@ public class TigerClient extends Client
 
 	private static final Logger APACHE_LOGGER = LogManager.getLogger();
 
-	private static final String versionType = "Beta";
-	private static final String clVersion = "2.8.3";
-	private static final String build = "0021";
-	private static final String version = clVersion + "-" + build;
+	public static final String versionType = "Beta";
+	public static final String clVersion = "2.8.3";
+	public static final String build = "0021";
+	public static final String version_format = "%s-%s";
+	private static final String version = String.format(version_format, clVersion, build);
 	private static final int versionNumber = 2;
 	private static final String currentAccept = "1";
 	private final ClientCompatiblityExecutor executor;
@@ -117,10 +119,7 @@ public class TigerClient extends Client
 		DEV = System.getProperty("development", "false").equalsIgnoreCase("true");
 
 		if (DEV) {
-			final String first = "--::tc_version=";
-			final String last = "=tc_version::--";
-
-			System.out.println(first + clVersion + last); // For the Version grapper in the Compiler
+			VersionPrinter.__internal__();
 		}
 	}
 

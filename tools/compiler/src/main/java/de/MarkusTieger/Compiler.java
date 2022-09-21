@@ -9,6 +9,7 @@ import static de.MarkusTieger.obf.ObfuscationConfig.IGNORE_WARNINGS;
 import static de.MarkusTieger.obf.ObfuscationConfig.KEEP_ALL_ATTRIBUTES;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -16,8 +17,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.MessageDigest;
@@ -49,6 +53,7 @@ public class Compiler {
     @SuppressWarnings("unused")
 	private static final String JAVA_PATH = "java";
     private static String PASS = "";
+	private static File forgeJar = null, vanillaJar = null;
     
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
@@ -64,7 +69,7 @@ public class Compiler {
         
         String blank = multi('\n', 20);
 
-        if(args.length == 1) {
+        if(args.length > 0) {
         	PASS = args[0];
         } else {
         	Scanner x = new Scanner(System.in);
@@ -78,8 +83,13 @@ public class Compiler {
         
         System.out.println(blank);
 
+        IVersionFetchable fetchable = 
+     // Compiler::fetchVersionUsingRunClient; Outdated :(
+        
+        Compiler::fetchVersionUsingPrinter;
+        
         if(client.exists() && forge_executor.exists() && vanilla_executor.exists() && lua_extension.exists()) {
-            handleClient(client, forge_executor, vanilla_executor);
+            handleClient(fetchable, client, forge_executor, vanilla_executor);
         } else {
             System.err.println("Not all Sources are present!");
         }
@@ -94,7 +104,7 @@ public class Compiler {
         return str;
     }
 
-    private static void handleClient(File... searchDirectories) throws IOException, InterruptedException {
+    private static void handleClient(IVersionFetchable fetchable, File... searchDirectories) throws IOException, InterruptedException {
 
     	List<File> signs = new ArrayList<>();
     	AbstractConfig.LoaderConfig.RootLoaderConfig loader_config = new AbstractConfig.LoaderConfig.RootLoaderConfig();
@@ -501,19 +511,18 @@ public class Compiler {
         File loader_dir = new File(output, "loaders");
         if(!loader_dir.exists()) loader_dir.mkdir();
         
-        File forgeJar = new File(loader_dir, "forge.jar");
+        Compiler.forgeJar = new File(loader_dir, "forge.jar");
         signs.add(forgeJar);
         
         // compileCommonLoader();
         
         compileForgeLoader(forgeJar);
         
-        File vanillaJar = new File("temp_def_vanilla.jar");
+        Compiler.vanillaJar = new File("temp_def_vanilla.jar");
         
         compileVanillaLoader(mc_version, vanillaJar);
         
         File obf_vanilla = new File("temp_obf_vanilla.jar");
-        
         
         File javaHome = new File(System.getProperty("java.home", "."));
         File jmods = new File(javaHome, "jmods");
@@ -604,12 +613,15 @@ public class Compiler {
         config.getCustomLines().add(IGNORE_WARNINGS);
         
         config.getCustomLines().add("-keeppackagenames net.minecraft.client.main");
+        config.getCustomLines().add("-keeppackagenames de.MarkusTieger");
         config.getCustomLines().add("-keepclassmembers class * {\r\n"
         		+ "    @net.minecraft.obfuscate.DontObfuscate\r\n"
         		+ "    public <fields>;\r\n"
         		+ "    @net.minecraft.obfuscate.DontObfuscate\r\n"
         		+ "    public <methods>;\r\n"
         		+ "}");
+        
+        
         config.getCustomLines().add("-keepclasseswithmembers,includedescriptorclasses,includecode class net.minecraft.client.main.**");
         /*config.getCustomLines().add("-keepclasseswithmembers,includedescriptorclasses,includecode class de.MarkusTieger.** {\r\n"
         		+ "    *** **;\r\n"
@@ -632,6 +644,7 @@ public class Compiler {
         		+ "    public static ** valueOf(java.lang.String);\r\n"
         		+ "}");
         
+        config.getCustomLines().add("-keep class de.MarkusTieger.VersionPrinter { *; }");
         config.getCustomLines().add("-keep class de.MarkusTieger.tigerclient.loader.AbstractConfig { *; }");
         config.getCustomLines().add("-keep class de.MarkusTieger.tigerclient.loader.AbstractConfig$LoaderConfig { *; }");
         config.getCustomLines().add("-keep class de.MarkusTieger.tigerclient.loader.AbstractConfig$DownloadableFile { *; }");
@@ -664,6 +677,8 @@ public class Compiler {
         
         sectored_files = sector(vanilla, obf_vanilla, MAX_FILE_SIZE, false);
         Arrays.stream(sectored_files).forEach(signs::add);
+        
+        signs.add(vanillaJar);
         
         System.out.println("Signing Jars...");
 
@@ -748,7 +763,7 @@ public class Compiler {
         fos.flush();
         fos.close();
         
-        ClientVersion versionPair = fetchVersion();
+        ClientVersion versionPair = fetchable.fetch();
         
         loader_config.version = versionPair.client();
         
@@ -951,7 +966,82 @@ public class Compiler {
 		return args[0] + '.' + args[1];
 	}
 
-	private static ClientVersion fetchVersion() throws InterruptedException, IOException {
+	private static ClientVersion fetchVersionUsingPrinter() throws IOException {
+		
+		final String printer_class = "de.MarkusTieger.VersionPrinter";
+		
+		ClientVersion forge = null;
+		ClientVersion vanilla = null;
+		
+		final PrintStream out = System.out;
+		ClientVersionPrinter sysout = new ClientVersionPrinter(new ByteArrayOutputStream());
+		
+		System.setOut(sysout);
+		
+		try (URLClassLoader loader = new URLClassLoader(new URL[] {forgeJar.toURI().toURL()})) {
+			
+			Class<?> clazz = Class.forName(printer_class, true, loader);
+			
+			Method m = clazz.getDeclaredMethod("recursivly");
+			m.invoke(null);
+			
+			forge = sysout.toVersion("forge");
+		} catch (Throwable e) {
+			e.printStackTrace(System.err);
+		}
+		sysout = new ClientVersionPrinter(new ByteArrayOutputStream());
+		
+		System.setOut(sysout);
+		
+		try (URLClassLoader loader = new URLClassLoader(new URL[] {vanillaJar.toURI().toURL()})) {
+			
+			Class<?> clazz = Class.forName(printer_class, true, loader);
+			
+			Method m = clazz.getDeclaredMethod("recursivly");
+			m.invoke(null);
+			
+			vanilla = sysout.toVersion("vanilla");
+		} catch (Throwable e) {
+			e.printStackTrace(System.err);
+		}
+		System.setOut(out);
+		
+		System.out.println();
+		
+		return combine(forge, vanilla);
+	}
+	
+	private static ClientVersion combine(ClientVersion ver1, ClientVersion ver2) {
+		String clientVer = null;
+		String commonVer = null;
+		Map<String, String> loader_versions = new HashMap<>();
+		
+		
+		if(ver1 != null) {
+			clientVer = ver1.client();
+			commonVer = ver1.loader_common();
+			loader_versions.putAll(ver1.loader_versions());
+		}
+		
+		if(ver2 != null) {
+			if(ver1 == null) {
+				clientVer = ver2.client();
+				commonVer = ver2.loader_common();
+				loader_versions.putAll(ver2.loader_versions());
+			} else {
+				if(!clientVer.equalsIgnoreCase(ver2.client())) throw new RuntimeException("Difference between Forge and Vanilla Client-Version: "+ clientVer + " != " + ver2.client());
+				if(!commonVer.equalsIgnoreCase(ver2.loader_common())) throw new RuntimeException("Difference between Forge and Vanilla Common-Version: "+ commonVer + " != " + ver2.loader_common());
+				for(Map.Entry<String, String> e : ver2.loader_versions().entrySet()) {
+					if(loader_versions.containsKey(e.getKey())) throw new RuntimeException("Value's Duplicated: " + e.getKey());
+					loader_versions.put(e.getKey(), e.getValue());
+				}
+			}
+		}
+		
+		return new ClientVersion(clientVer, loader_versions, commonVer);
+	}
+	
+	private static ClientVersion fetchVersionUsingRunClient() throws InterruptedException, IOException {
     	
     	File baseDir = new File("../../loader/forge");
     	
@@ -969,62 +1059,7 @@ public class Compiler {
     	try {
     		Process p = builder.start();
     		
-    		BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8));
-    		
-    		final String first_loader_forge = "--::tc_loader=";
-    		final String last_loader_forge = "=tc_loader::--";
-    		
-    		final String first_loader_common = "--::tc_common=";
-    		final String last_loader_common = "=tc_common::--";
-    		
-    		final String first_client = "--::tc_version=";
-    		final String last_client = "=tc_version::--";
-    		
-    		
-    		
-    		String str = null;
-    		while((str = reader.readLine()) != null) {
-    			
-    			loader_forge: {
-    				if(!str.contains(first_loader_forge)) break loader_forge;
-    				if(!str.contains(last_loader_forge)) break loader_forge;
-    			
-    				int index1 = str.indexOf(first_loader_forge) + first_loader_forge.length();
-    				int index2 = str.indexOf(last_loader_forge);
-    			
-    				loader_forge_ver = str.substring(index1, index2);
-    			}
-    			
-    			loader_common: {
-    				if(!str.contains(first_loader_common)) break loader_common;
-    				if(!str.contains(last_loader_common)) break loader_common;
-    			
-    				int index1 = str.indexOf(first_loader_common) + first_loader_common.length();
-    				int index2 = str.indexOf(last_loader_common);
-    			
-    				loader_common_ver = str.substring(index1, index2);
-    			}
-    			
-    			client: {
-    				if(!str.contains(first_client)) break client;
-    				if(!str.contains(last_client)) break client;
-    			
-    				int index1 = str.indexOf(first_client) + first_client.length();
-    				int index2 = str.indexOf(last_client);
-    			
-    				client_ver = str.substring(index1, index2);
-    			}
-    			
-    			if(loader_forge_ver != null && loader_common_ver != null && client_ver != null) {
-    				p.destroyForcibly();
-    				
-    				Map<String, String> loaders = new HashMap<>();
-    				loaders.put("forge", loader_forge_ver);
-    				
-    				return new ClientVersion(client_ver, loaders, loader_common_ver);
-    			}
-    			
-    		}
+    		return ClientVersionPrinter.toVersion("forge", p.getInputStream(), p::destroyForcibly);
     		
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -1137,6 +1172,9 @@ public class Compiler {
     	
     	System.out.println("Applying Patch...");
     	
+    	builder = new ProcessBuilder("rm", "-rf", ".gitignore");
+    	builder.directory(reborn).start().waitFor();
+    	
     	builder = new ProcessBuilder("git", "apply", "../0002-Loader.patch");
     	builder.inheritIO().directory(reborn).start().waitFor();
     	
@@ -1164,9 +1202,7 @@ public class Compiler {
     	target.renameTo(vanillaJar);
     	
     	builder = new ProcessBuilder("rm", "-rf", reborn.getName() + "/");
-    	builder.inheritIO().directory(baseDir).start().waitFor();
-    	
-    	
+    	// builder.inheritIO().directory(baseDir).start().waitFor();
     	
 	}
     
