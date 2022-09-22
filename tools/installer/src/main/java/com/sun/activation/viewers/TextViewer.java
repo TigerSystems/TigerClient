@@ -40,10 +40,17 @@
 
 package com.sun.activation.viewers;
 
-import java.awt.*;
-import java.io.*;
-import java.beans.*;
-import javax.activation.*;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Panel;
+import java.awt.TextArea;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.activation.CommandObject;
+import javax.activation.DataHandler;
 
 @SuppressWarnings("all")
 public class TextViewer extends Panel implements CommandObject {

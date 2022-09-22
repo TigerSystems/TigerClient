@@ -13,15 +13,19 @@ import de.MarkusTieger.common.Client;
 import de.MarkusTieger.common.logger.LoggingCategory;
 import de.MarkusTieger.common.modules.IModule;
 import de.MarkusTieger.common.modules.IModuleRegistry;
+import de.MarkusTieger.common.registry.IRegistry;
 import de.MarkusTieger.common.utils.IConfigable;
 import de.MarkusTieger.common.utils.IDraggable;
 import de.MarkusTieger.common.utils.IHighspeedTick;
 import de.MarkusTieger.common.utils.IKeyable;
 import de.MarkusTieger.common.utils.IMouseable;
 import de.MarkusTieger.common.utils.IMultiDrag;
+import de.MarkusTieger.common.utils.IPacketEditor;
+import de.MarkusTieger.common.utils.IPacketEditor.PacketSides;
 import de.MarkusTieger.common.utils.ITickable;
 import de.MarkusTieger.tigerclient.gui.screens.ModsPositionScreen;
 import de.MarkusTieger.tigerclient.registry.StaticRegistry;
+import net.minecraft.network.protocol.Packet;
 
 @SuppressWarnings("rawtypes")
 public class ModuleRegistry implements IModuleRegistry {
@@ -39,7 +43,8 @@ public class ModuleRegistry implements IModuleRegistry {
 	private final StaticRegistry<IKeyable<?>> keys = new StaticRegistry<>();
 	private final StaticRegistry<IMouseable<?>> mouses = new StaticRegistry<>();
 	private final StaticRegistry<IConfigable<?>> configs = new StaticRegistry<>();
-
+	private final StaticRegistry<IPacketEditor<?>> packets = new StaticRegistry<>();
+	
 	private final Predicate<IModule<?>> PREDICATE = (mod) -> {
 
 		if (mod.isDevOnly() && !Client.getInstance().isDev())
@@ -56,13 +61,15 @@ public class ModuleRegistry implements IModuleRegistry {
 		final StaticRegistry<IKeyable> keys = new StaticRegistry<>();
 		final StaticRegistry<IMouseable> mouses = new StaticRegistry<>();
 		final StaticRegistry<IConfigable> configs = new StaticRegistry<>();
-
+		final StaticRegistry<IPacketEditor> packets = new StaticRegistry<>();
+		
 		fill(ticks, ITickable.class, false);
 		fill(hticks, IHighspeedTick.class, false);
 		fill(drags, IDraggable.class, false);
 		fill(keys, IKeyable.class, false);
 		fill(mouses, IMouseable.class, false);
 		fill(configs, IConfigable.class, true);
+		fill(packets, IPacketEditor.class, false);
 
 		for (IModule<?> module : modules) {
 			try {
@@ -81,6 +88,7 @@ public class ModuleRegistry implements IModuleRegistry {
 		keys.mapForGenericTypes(this.keys, (t) -> (IKeyable<?>) t);
 		mouses.mapForGenericTypes(this.mouses, (t) -> (IMouseable<?>) t);
 		configs.mapForGenericTypes(this.configs, (t) -> (IConfigable<?>) t);
+		packets.mapForGenericTypes(this.packets, (t) -> (IPacketEditor<?>)t);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -144,6 +152,11 @@ public class ModuleRegistry implements IModuleRegistry {
 	@Override
 	public StaticRegistry<IConfigable<?>> getConfigable() {
 		return configs;
+	}
+	
+	@Override
+	public IRegistry<?, IPacketEditor<?>> getPacketable() {
+		return packets;
 	}
 
 	@Override
@@ -226,6 +239,37 @@ public class ModuleRegistry implements IModuleRegistry {
 	@Override
 	public Predicate<IModule<?>> getPredicate() {
 		return PREDICATE;
+	}
+
+	@Override
+	public boolean accept(Packet<?> packet) {
+		return packets.toArray().stream().anyMatch((edit) -> {
+			try {
+				return edit.accept(packet);
+			} catch (Throwable ex) {
+				Client.getInstance().getLogger()
+				.warn(LoggingCategory.MODULES,
+						"PacketEditor \"" + edit.getClass().getName()
+								+ "\" throwed an Exception on Packet-Accept-Event (Packet: \"" + packet.getClass().getName() + "\"). Will be ignored.",
+						ex);
+			}
+			return false;
+		});
+	}
+
+	@Override
+	public PacketSides getSides() {
+		PacketSides sides = PacketSides.NONE;
+		for (IPacketEditor<?> packet : packets) {
+			
+		}
+		return null;
+	}
+
+	@Override
+	public <E extends Packet<?>> E edit(E packet) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

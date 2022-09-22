@@ -40,15 +40,12 @@
 
 package javax.activation;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import com.sun.activation.registries.MimeTypeFile;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * The FileDataSource class implements a simple DataSource object

@@ -2,7 +2,6 @@ package de.MarkusTieger;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,7 +28,6 @@ import java.util.Properties;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -54,6 +52,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.bind.DatatypeConverter;
 
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialDarkerContrastIJTheme;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -79,16 +78,20 @@ public class Installer {
 
     	
     	System.out.println("Initializing Look and Feel...");
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
+        if(System.getProperty("ui.useSystem") != null) {
+        	try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (UnsupportedLookAndFeelException e) {
+                e.printStackTrace();
+            }
+        } else {
+        	FlatMaterialDarkerContrastIJTheme.setup();
         }
         
         // Test-Code
@@ -105,7 +108,7 @@ public class Installer {
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
-
+        
         frame.setVisible(true);
         frame.setVisible(false);
 
@@ -966,7 +969,8 @@ public class Installer {
     
     private static final Predicate<Object> NOT_NULL = (obj) -> obj != null;
     
-    private static boolean verify(JarEntry je) {
+    @SuppressWarnings("unused")
+	private static boolean verify(JarEntry je) {
     	boolean equal = false;
 
         Certificate[] certs = je.getCertificates();
@@ -1025,7 +1029,7 @@ public class Installer {
         
         executor.accept(() -> installWindow(executor, install_target));
         
-        state = "Require Beta-Secret";
+        /*state = "Require Beta-Secret";
         
         final String extension = "tc2-beta-secret";
         
@@ -1096,7 +1100,9 @@ public class Installer {
             	ex.printStackTrace();
             }
         	
-        }
+        }*/
+        
+        state = "Installation should be started quickly...";
         
     	if(id == 0) {
 

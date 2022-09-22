@@ -18,7 +18,7 @@ public class TigerClientOptions extends OptionsScreen {
 		 * login(t); } }));
 		 */
 		addOption(new ScreenAction("screen.option.mods", new ModsScreen(this)));
-		addOption(new ScreenAction("screen.option.certs", new CertificatesScreen(this)));
+		// addOption(new ScreenAction("screen.option.certs", new CertificatesScreen(this)));
 		// addOption(new CustomAction(isTACInstalled() ? "screen.option.uninstall_tac" :
 		// "screen.option.install_tac", (btn) -> {
 

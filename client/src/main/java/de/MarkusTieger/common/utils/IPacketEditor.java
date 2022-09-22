@@ -12,7 +12,7 @@ public interface IPacketEditor<T extends Throwable> {
 
 	public static enum PacketSides {
 
-		SEND, RECIEVE, BOTH;
+		NONE, SEND, RECIEVE, BOTH;
 
 	}
 

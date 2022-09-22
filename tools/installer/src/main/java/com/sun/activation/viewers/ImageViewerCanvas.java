@@ -40,7 +40,10 @@
 
 package com.sun.activation.viewers;
 
-import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
 
 @SuppressWarnings("all")
 public class ImageViewerCanvas extends Canvas

@@ -40,11 +40,14 @@
 
 package javax.activation;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import com.sun.activation.registries.MimeTypeFile;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Vector;
+
 import com.sun.activation.registries.LogSupport;
+import com.sun.activation.registries.MimeTypeFile;
 
 /**
  * This class extends FileTypeMap and provides data typing of files

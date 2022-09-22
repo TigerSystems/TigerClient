@@ -44,25 +44,6 @@ public class ChatManager extends ChatComponent {
 		this.minecraft = Minecraft.getInstance();
 	}
 
-	@SuppressWarnings("resource")
-	public void inject(PatchManager patch) {
-
-		for (Field chat_component : Gui.class.getDeclaredFields()) {
-			if (chat_component.getType() == ChatComponent.class) {
-
-				try {
-					patch.patch(chat_component, PatchType.BOTH);
-					chat_component.set(Minecraft.getInstance().gui, this);
-				} catch (Throwable e) {
-					Client.getInstance().getLogger().warn(LoggingCategory.PATCH, "Can't Patch Chat.", e);
-				}
-
-				return;
-			}
-		}
-
-	}
-
 	@SuppressWarnings("unused")
 	public void render(PoseStack p_93781_, int p_93782_) {
 		if (!this.isChatHidden()) {
@@ -366,6 +347,29 @@ public class ChatManager extends ChatComponent {
 				this.lastMessage = i;
 			} else {
 				this.chatQueue.add(p_93809_);
+			}
+		}
+
+	}
+	
+	
+	
+	
+	// Don't Edit this part, it's applys the chat if possible.
+	@SuppressWarnings("resource")
+	public void inject(PatchManager patch) {
+
+		for (Field chat_component : Gui.class.getDeclaredFields()) {
+			if (chat_component.getType() == ChatComponent.class) {
+
+				try {
+					patch.patch(chat_component, PatchType.BOTH);
+					chat_component.set(Minecraft.getInstance().gui, this);
+				} catch (Throwable e) {
+					Client.getInstance().getLogger().warn(LoggingCategory.PATCH, "Can't Patch Chat.", e);
+				}
+
+				return;
 			}
 		}
 

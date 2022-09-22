@@ -50,7 +50,7 @@ public class FPS extends GuiComponent
 	@Override
 	public void configure(Screen parent) {
 		Minecraft.getInstance()
-				.setScreen(new BasicDraggableModuleConfigurationScreen(this, parent, this::updateShadow));
+				.setScreen(new BasicDraggableModuleConfigurationScreen(this, parent, false, this::updateShadow));
 	}
 
 	private boolean shadow = false;

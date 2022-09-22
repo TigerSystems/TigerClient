@@ -21,6 +21,7 @@ repositories {
     }
     mavenCentral()
 }
+
 dependencies {
     
 	compileOnly 'com.mojang:logging:1.0.0'
@@ -83,6 +84,7 @@ dependencies {
 	compileOnly 'com.mojang:text2speech:1.12.4'
 	compileOnly 'ca.weblite:java-objc-bridge:1.0.0'
 	compileOnly 'ca.weblite:java-objc-bridge:1.0.0'
+    
     
     compileOnly files("../data/gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/" + mc_version + "-" + forge_version + "_mapped_" + mc_mappings + "_" + mc_version + "/forge-" + mc_version + "-" + forge_version + "_mapped_" + mc_mappings + "_" + mc_version + "-recomp.jar")
     // system group: 'net.minecraft.client', name: 'minecraft', version:'1.18.2'

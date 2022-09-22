@@ -40,11 +40,26 @@
 
 package com.sun.activation.viewers;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.beans.*;
-import javax.activation.*;
+import java.awt.Button;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Panel;
+import java.awt.TextArea;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import javax.activation.CommandObject;
+import javax.activation.DataHandler;
 
 @SuppressWarnings("all")
 public class TextEditor extends Panel implements CommandObject,

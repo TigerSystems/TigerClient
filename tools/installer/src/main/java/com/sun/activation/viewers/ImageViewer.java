@@ -40,10 +40,16 @@
 
 package com.sun.activation.viewers;
 
-import java.awt.*;
-import java.io.*;
-import java.beans.*;
-import javax.activation.*;
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.Panel;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.activation.CommandObject;
+import javax.activation.DataHandler;
 
 @SuppressWarnings("all")
 public class ImageViewer extends Panel implements CommandObject {

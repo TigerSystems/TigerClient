@@ -74,6 +74,8 @@
   "tac.key.generate": "The Key for the Encoding is generating...",
   "modules.config.shadow.true": "Box Shadow: Enabled",
   "modules.config.shadow.false": "Box Shadow: Disabled",
+  "modules.config.fixed.true": "Draggable: Fixed",
+  "modules.config.fixed.false": "Draggable: Flexible",
   "button.ignore.title": "Ignore",
   "button.copy.title": "Copy",
   "screen.patch.title": "Patch Required",

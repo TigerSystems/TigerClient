@@ -29,7 +29,10 @@ public class ArmorStatus extends GuiComponent
 		implements IModule<Throwable>, IMultiDrag<Throwable>, IConfigable<Throwable> {
 
 	public static boolean enabled = false;
+	
 	public ArrayList<IDraggable<Throwable>> draggs = new ArrayList<>();
+	public final IDraggable<Throwable> fixed;
+	
 	@SuppressWarnings("unused")
 	private final Font font = Minecraft.getInstance().font;
 
@@ -235,6 +238,62 @@ public class ArmorStatus extends GuiComponent
 			}
 
 		});
+	
+		fixed = new IDraggable<Throwable>() {
+
+			private ScreenPosition pos = ScreenPosition.fromRelativePosition(0.5D, 0.5D);
+			
+			@Override
+			public int getHeight() throws Throwable {
+				return (20 * draggs.size()) + (4 * draggs.size());
+			}
+
+			@Override
+			public int getWidth() throws Throwable {
+				return 20;
+			}
+
+			@Override
+			public ScreenPosition load() throws Throwable {
+				return pos;
+			}
+
+			@Override
+			public void render(PoseStack stack, ScreenPosition pos) throws Throwable {
+				int p = 0;
+				for(IDraggable<Throwable> drag : draggs) {
+					
+					int y = p * 24;
+					
+					drag.render(stack, ScreenPosition.fromAbsolutePosition(0, y));
+					
+					p++;
+				}
+			}
+
+			@Override
+			public void renderDummy(PoseStack stack, ScreenPosition pos) throws Throwable {
+				int p = 0;
+				for(IDraggable<Throwable> drag : draggs) {
+					
+					int y = p * 24;
+					
+					drag.renderDummy(stack, ScreenPosition.fromAbsolutePosition(0, y));
+					
+					p++;
+				}
+			}
+
+			@Override
+			public void save(ScreenPosition screenPosition) throws Throwable {
+				pos = screenPosition;
+			}
+
+			@Override
+			public String getId() {
+				return ArmorStatus.this.getId();
+			}
+		};
 	}
 
 	@Override
@@ -250,18 +309,26 @@ public class ArmorStatus extends GuiComponent
 	@Override
 	public void configure(Screen parent) {
 		Minecraft.getInstance()
-				.setScreen(new BasicDraggableModuleConfigurationScreen(this, parent, this::updateShadow));
+				.setScreen(new BasicDraggableModuleConfigurationScreen(this, parent, true, this::update));
 	}
 
 	private boolean shadow = false;
+	private boolean fix = true;
 
-	public void updateShadow() {
+	public void update() {
 		IConfiguration config = Client.getInstance().getInstanceRegistry().load(IConfiguration.class);
 		Object obj = config.get("modules#" + getId() + "#shadow");
 		if (obj instanceof Boolean) {
 			shadow = (boolean) obj;
 		} else {
 			shadow = false;
+		}
+		
+		obj = config.get("modules#" + getId() + "#fixed");
+		if (obj instanceof Boolean) {
+			fix = (boolean) obj;
+		} else {
+			fix = true;
 		}
 	}
 
@@ -307,7 +374,7 @@ public class ArmorStatus extends GuiComponent
 
 	@Override
 	public List<IDraggable<Throwable>> getDraggables() {
-		return draggs;
+		return fix ? List.of(fixed) : draggs;
 	}
 
 	@Override
@@ -333,7 +400,7 @@ public class ArmorStatus extends GuiComponent
 	@Override
 	public void setEnabled(boolean bool) {
 		enabled = bool;
-		updateShadow();
+		update();
 	}
 
 	@Override

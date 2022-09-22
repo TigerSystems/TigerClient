@@ -40,8 +40,6 @@
 
 package com.sun.activation.registries;
 
-import java.lang.*;
-
 @SuppressWarnings("all")
 public class MimeTypeEntry {
     private String type;

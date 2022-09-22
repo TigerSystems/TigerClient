@@ -10,11 +10,12 @@ public class BasicDraggableModuleConfigurationScreen extends OptionsScreen {
 
 	private final Runnable update;
 
-	public BasicDraggableModuleConfigurationScreen(IModule<?> mod, Screen parent, Runnable update) {
+	public BasicDraggableModuleConfigurationScreen(IModule<?> mod, Screen parent, boolean fixable, Runnable update) {
 		super(new TranslatableComponent("screen.configure.mods.title"), parent);
 
 		this.update = update;
 
+		if(fixable) addOption(new BooleanOption("modules#" + mod.getId() + "#fixed", "modules.config.fixed", true));
 		addOption(new BooleanOption("modules#" + mod.getId() + "#shadow", "modules.config.shadow", false));
 	}
 
