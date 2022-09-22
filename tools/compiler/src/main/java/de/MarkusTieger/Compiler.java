@@ -880,7 +880,7 @@ public class Compiler {
 					
 					if(!sha.exists()) sha.createNewFile();
 					try (FileOutputStream fos = new FileOutputStream(sha)) {
-						fos.write(hash);
+						fos.write(bytesToHex(hash).getBytes(StandardCharsets.UTF_8));
 						fos.flush();
 					}
 				}
