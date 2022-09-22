@@ -13,18 +13,19 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Set up Zulu JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+      - name: Compiling with Gradle
+        run: "./gradlew -Dgradle.user.home=../../data/gradle run --args='${{ secrets.KEYSTORE_PASSWORD }}'"
+        working-directory: tools/compiler/
+
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
           server: 185.27.134.11
           username: epiz_28203448
           password: ${{ secrets.ftp_password }}
-          server-dir: htdocs/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/.github*
-            **/.github*/**
-            **/node_modules/**
-            tigerclient/downloads/TigerClient-*
-            tigerclient/downloads/TigerClient-*/**
+          server-dir: htdocs/tigerclient/files/
