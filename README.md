@@ -34,7 +34,7 @@ In the directory inside the cloned Repository "tools/compiler", run:<br />
 The Result is in the directory "data/compiled" inside the Repository.<br /><br />
 
 **Eclipse IDE Method:**<br />
-Clone the Repository with [Eclipse IDE for Java Developers](https://www.eclipse.org/downloads/packages/release/2022-09/r/eclipse-ide-java-developers) using EGit (Eclipse Plugin, should be pre-installed) and check the box "Import all existing Eclipse projects after clone finishes"<br />
+Clone the Repository with [Eclipse IDE for Java Developers](https://www.eclipse.org/downloads/packages/release/2022-09/r/eclipse-ide-java-developers) using [EGit](https://marketplace.eclipse.org/content/egit-git-integration-eclipse) (Eclipse Plugin, should be pre-installed) and check the box "Import all existing Eclipse projects after clone finishes"<br />
 The Result is in the "*09* Compiled Data" Project.<br /><br />
 
 **Other IDE Method:** *(Not recommended, just use Eclipse IDE)*<br />
