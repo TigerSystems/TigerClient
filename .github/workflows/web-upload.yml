@@ -1,0 +1,30 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Upload to Webserver
+
+# Controls when the workflow will run
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+        with:
+          server: 185.27.134.11
+          username: epiz_28203448
+          password: ${{ secrets.ftp_password }}
+          server-dir: htdocs/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github*
+            **/.github*/**
+            **/node_modules/**
+            tigerclient/downloads/TigerClient-*
+            tigerclient/downloads/TigerClient-*/**
