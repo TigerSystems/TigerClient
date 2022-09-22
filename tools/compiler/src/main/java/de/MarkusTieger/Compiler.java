@@ -104,7 +104,7 @@ public class Compiler {
         return str;
     }
 
-    private static void handleClient(IVersionFetchable fetchable, File... searchDirectories) throws IOException, InterruptedException {
+    private static void handleClient(IVersionFetchable fetchable, File... searchDirectories) throws IOException, InterruptedException, NoSuchAlgorithmException {
 
     	List<File> signs = new ArrayList<>();
     	AbstractConfig.LoaderConfig.RootLoaderConfig loader_config = new AbstractConfig.LoaderConfig.RootLoaderConfig();
@@ -838,6 +838,10 @@ public class Compiler {
         
         compileInstaller(output);
         
+        System.out.println("Creating Hashes...");
+        
+        hashRecursivly(output);
+        
         System.out.println("Finish!\n");
         
         
@@ -860,7 +864,32 @@ public class Compiler {
         System.out.println("Java: " + System.getProperty("java.version", "Unknown"));
     }
     
-    private static void compileInstaller(File output) throws InterruptedException, IOException {
+    
+    
+    private static void hashRecursivly(File output) throws IOException, NoSuchAlgorithmException {
+    	MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        
+    	
+		for(File f : output.listFiles()) {
+			if(f.isDirectory()) hashRecursivly(output);
+			if(f.isFile()) {
+				File sha = new File(output, f.getName() + ".sha256");
+				
+				try (FileInputStream fis = new FileInputStream(f)) {
+					byte[] hash = digest.digest(fis.readAllBytes());
+					
+					if(!sha.exists()) sha.createNewFile();
+					try (FileOutputStream fos = new FileOutputStream(sha)) {
+						fos.write(hash);
+						fos.flush();
+					}
+				}
+				
+			}
+		}
+	}
+
+	private static void compileInstaller(File output) throws InterruptedException, IOException {
 		File tools = new File(output, "tools");
 		if(!tools.exists()) tools.mkdirs();
 		
