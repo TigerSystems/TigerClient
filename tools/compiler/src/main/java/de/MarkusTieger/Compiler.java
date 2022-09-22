@@ -871,7 +871,7 @@ public class Compiler {
         
     	
 		for(File f : output.listFiles()) {
-			if(f.isDirectory()) hashRecursivly(output);
+			if(f.isDirectory()) hashRecursivly(f);
 			if(f.isFile()) {
 				File sha = new File(output, f.getName() + ".sha256");
 				
