@@ -29,3 +29,4 @@ jobs:
           username: epiz_28203448
           password: ${{ secrets.ftp_password }}
           server-dir: htdocs/tigerclient/files/
+          local-dir: ./data/compiled/
