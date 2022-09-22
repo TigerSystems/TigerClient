@@ -554,7 +554,7 @@ public class Compiler {
         
         Map<URL, Pair<String, ArrayList<DownloadableFile>>> libraries = new HashMap<>();
         
-        libraries.put(new URL("https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.39.3.0/sqlite-jdbc-3.39.3.0.jar"), new Pair<>("sqlite-jdbc_3-39-3-0.jar", loader_config.all));
+        // libraries.put(new URL("https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.39.3.0/sqlite-jdbc-3.39.3.0.jar"), new Pair<>("sqlite-jdbc_3-39-3-0.jar", loader_config.all));
         libraries.put(new URL("https://repo1.maven.org/maven2/com/github/oshi/oshi-core/5.8.6/oshi-core-5.8.6.jar"), new Pair<>("oshi-core_5-8-6.jar", loader_config.all));
         
         libraries.put(new URL("https://repo1.maven.org/maven2/org/luaj/luaj-jse/3.0.1/luaj-jse-3.0.1.jar"), new Pair<>("luaj-jse_3-0-1.jar", lua.all));
