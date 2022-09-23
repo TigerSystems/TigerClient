@@ -265,7 +265,7 @@ public class ArmorStatus extends GuiComponent
 					
 					int y = p * 24;
 					
-					drag.render(stack, ScreenPosition.fromAbsolutePosition(0, y));
+					drag.render(stack, ScreenPosition.fromAbsolutePosition((int) pos.getAbsouluteX(), (int) pos.getAbsouluteY() + y));
 					
 					p++;
 				}
@@ -278,7 +278,7 @@ public class ArmorStatus extends GuiComponent
 					
 					int y = p * 24;
 					
-					drag.renderDummy(stack, ScreenPosition.fromAbsolutePosition(0, y));
+					drag.renderDummy(stack, ScreenPosition.fromAbsolutePosition((int) pos.getAbsouluteX(), (int) pos.getAbsouluteY() + y));
 					
 					p++;
 				}
@@ -330,6 +330,7 @@ public class ArmorStatus extends GuiComponent
 		} else {
 			fix = true;
 		}
+		Client.getInstance().getModuleRegistry().update();
 	}
 
 	public void renderShadow(PoseStack stack, ScreenPosition pos, IDraggable<Throwable> draggable) throws Throwable {

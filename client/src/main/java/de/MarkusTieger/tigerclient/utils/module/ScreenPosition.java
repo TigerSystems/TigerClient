@@ -14,7 +14,9 @@ public class ScreenPosition {
 	}
 
 	public static ScreenPosition fromAbsolutePosition(int x, int y) {
-		return new ScreenPosition(0.5D, 0.5D);
+		ScreenPosition pos = new ScreenPosition(0.5D, 0.5D);
+		pos.setAbsolute(x, y);
+		return pos;
 	}
 
 	public static ScreenPosition fromRelativePosition(double x, double y) {

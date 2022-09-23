@@ -103,7 +103,7 @@ public class ClientLoader implements ILoader {
         }
 
         if(new File(directory, "debug").exists()) download = true;
-
+        
         if(download) {
             try {
                 loadConnection("config/loader", "json");
@@ -458,6 +458,7 @@ public class ClientLoader implements ILoader {
                     "0.0.0",
                     "0000"
             );
+            
             try {
                 Files.delete(loadercfg.toPath());
             } catch (IOException e) {

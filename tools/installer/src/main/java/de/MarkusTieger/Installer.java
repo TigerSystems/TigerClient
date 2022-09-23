@@ -61,6 +61,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 
 import de.MarkusTieger.Installation.VanillaInstallation;
+import de.MarkusTieger.diagnostics.DiagnosticReporter;
 import de.MarkusTieger.mod.ModFetcher;
 import de.MarkusTieger.mod.ModFile;
 
@@ -128,11 +129,30 @@ public class Installer {
 		});
         frame.add(install_recommends);
         
+        JPanel diagnostics = new JPanel();
+        diagnostics.setLayout(null);
+        diagnostics.setBounds(width / 2 + 25, 25, width / 2 - 50, 100);
+        diagnostics.setBorder(new TitledBorder(new EtchedBorder(), "Diagnostics (Comming Soon)"));
+        frame.add(diagnostics);
+        
+        JButton report = new JButton("New Report");
+        report.setBounds(25, 25, 105, 25);
+        report.addActionListener(DiagnosticReporter::onEvent);
+        report.setEnabled(false);
+        diagnostics.add(report);
+        
+        JButton repair = new JButton("Repair");
+        repair.setBounds(25, 60, 105, 25);
+        repair.setEnabled(false);
+        diagnostics.add(repair);
+        
         JPanel panel = new JPanel();
         panel.setLayout(null);
-        panel.setBounds(25, 25, width - 50, 100);
+        panel.setBounds(25, 25, width / 2 - 50, 100);
         panel.setBorder(new TitledBorder(new EtchedBorder(), "Loader-Type"));
 
+        
+        
         JRadioButton forge = new JRadioButton("Forge");
         JRadioButton vanilla = new JRadioButton("Vanilla");
 
