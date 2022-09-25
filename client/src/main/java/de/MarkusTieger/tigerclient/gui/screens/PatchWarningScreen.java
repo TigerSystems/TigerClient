@@ -12,7 +12,7 @@ public class PatchWarningScreen extends DisconnectedScreen {
 
 	private static final Component reason = new TranslatableComponent("screen.patch.message");
 
-	public static boolean IGNORED = false;
+	public static boolean IGNORED = true;
 
 	public PatchWarningScreen() {
 		super(null, new TranslatableComponent("screen.patch.title"), reason);

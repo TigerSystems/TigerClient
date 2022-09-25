@@ -873,6 +873,9 @@ public class Compiler {
 		for(File f : output.listFiles()) {
 			if(f.isDirectory()) hashRecursivly(f);
 			if(f.isFile()) {
+				
+				if(f.getName().endsWith(".sha256")) continue;
+				
 				File sha = new File(output, f.getName() + ".sha256");
 				
 				try (FileInputStream fis = new FileInputStream(f)) {

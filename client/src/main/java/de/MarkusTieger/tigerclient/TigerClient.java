@@ -38,6 +38,7 @@ import de.MarkusTieger.common.plugins.IPluginInfo;
 import de.MarkusTieger.common.plugins.IPluginManager;
 import de.MarkusTieger.common.services.IServiceRegistry;
 import de.MarkusTieger.common.tac.bridge.ITACBridge;
+import de.MarkusTieger.common.utils.CalculatableScreenPosition;
 import de.MarkusTieger.common.utils.IDraggable;
 import de.MarkusTieger.common.utils.IHighspeedTick;
 import de.MarkusTieger.common.utils.IKeyable;
@@ -84,7 +85,6 @@ import de.MarkusTieger.tigerclient.services.impl.ModuleTimer;
 import de.MarkusTieger.tigerclient.services.impl.Stopper;
 import de.MarkusTieger.tigerclient.utils.animation.AnimationRegistry;
 import de.MarkusTieger.tigerclient.utils.animation.AnimationUtils;
-import de.MarkusTieger.tigerclient.utils.module.ScreenPosition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraft.network.chat.Component;
@@ -99,8 +99,8 @@ public class TigerClient extends Client
 	private static final Logger APACHE_LOGGER = LogManager.getLogger();
 
 	public static final String versionType = "Beta";
-	public static final String clVersion = "2.9.0";
-	public static final String build = "0022";
+	public static final String clVersion = "2.10.0";
+	public static final String build = "0023";
 	public static final String version_format = "%s-%s";
 	private static final String version = String.format(version_format, clVersion, build);
 	private static final int versionNumber = 2;
@@ -332,11 +332,9 @@ public class TigerClient extends Client
 						ex);
 			}
 
-			if (mod instanceof IDraggable) {
+			if (mod instanceof IDraggable<?> drag) {
 				try {
-					((IDraggable<?>) mod).save(ScreenPosition.fromRelativePosition(
-							config.getOrDefault("modules#" + mod.getId() + "#position#x", 0.5D),
-							config.getOrDefault("modules#" + mod.getId() + "#position#y", 0.5D)));
+					drag.position_set(CalculatableScreenPosition.fromConfiguration((d, def) -> config.getOrDefault("modules#" + mod.getId() + "#" + d, def)));
 				} catch (Throwable ex) {
 					Client.getInstance().getLogger().warn(LoggingCategory.MODULES, "Draggable-Module \"" + mod.getId()
 							+ "\" throwed an Exception on Screen-Position-Configuring. Will be ignored.", ex);
@@ -347,9 +345,7 @@ public class TigerClient extends Client
 				try {
 					for (IDraggable<?> drag : ((IMultiDrag<?>) mod).getDraggables()) {
 						try {
-							drag.save(ScreenPosition.fromRelativePosition(
-									config.getOrDefault("modules#" + drag.getId() + "#position#x", 0.5D),
-									config.getOrDefault("modules#" + drag.getId() + "#position#y", 0.5D)));
+							drag.position_set(CalculatableScreenPosition.fromConfiguration((d, def) -> config.getOrDefault("modules#" + drag.getId() + "#" + d, def)));
 						} catch (Throwable ex) {
 							Client.getInstance().getLogger().warn(LoggingCategory.MODULES, "Draggable-Module \""
 									+ drag.getId()
@@ -575,29 +571,22 @@ public class TigerClient extends Client
 				config.set("modules#" + mod.getId() + "#enabled", false);
 			}
 
-			if (mod instanceof IDraggable) {
-				ScreenPosition sp = null;
+			if (mod instanceof IDraggable<?> drag) {
 
 				try {
-					sp = ((IDraggable<?>) mod).load();
+					drag.position().storeConfiguration((d, v) -> config.set("modules#" + mod.getId() + "#" + d, v));
 				} catch (Throwable ex) {
 					Client.getInstance().getLogger().warn(LoggingCategory.MODULES, "Draggable-Module \"" + mod.getId()
 							+ "\" throwed an Exception on Screen-Position-Saving. Data loss...", ex);
 					continue;
 				}
-
-				config.set("modules#" + mod.getId() + "#position#x", sp.getRelativeX());
-				config.set("modules#" + mod.getId() + "#position#y", sp.getRelativeY());
 			}
 
 			if (mod instanceof IMultiDrag) {
 				try {
 					for (IDraggable<?> drag : ((IMultiDrag<?>) mod).getDraggables()) {
-
-						ScreenPosition sp = null;
-
 						try {
-							sp = drag.load();
+							drag.position().storeConfiguration((d, v) -> config.set("modules#" + drag.getId() + "#" + d, v));
 						} catch (Throwable ex) {
 							Client.getInstance().getLogger()
 									.warn(LoggingCategory.MODULES,
@@ -606,9 +595,6 @@ public class TigerClient extends Client
 											ex);
 							continue;
 						}
-
-						config.set("modules#" + drag.getId() + "#position#x", sp.getRelativeX());
-						config.set("modules#" + drag.getId() + "#position#y", sp.getRelativeY());
 					}
 				} catch (Throwable ex) {
 					Client.getInstance().getLogger().warn(LoggingCategory.MODULES, "MultiDrag-Module \"" + mod.getId()
@@ -621,15 +607,19 @@ public class TigerClient extends Client
 
 		IPluginManager plugins = getInstanceRegistry().load(IPluginManager.class);
 
-		for (IPluginInfo info : plugins.getLoadedPlugins()) {
-			config.set("plugins#" + info.getId() + "#" + info.getVersion(), false);
-		}
-		for (IPluginInfo info : plugins.getEnabledPlugins()) {
-			config.set("plugins#" + info.getId() + "#" + info.getVersion(), true);
+		if(plugins != null) {
+			
+			for (IPluginInfo info : plugins.getLoadedPlugins()) {
+				config.set("plugins#" + info.getId() + "#" + info.getVersion(), false);
+			}
+			for (IPluginInfo info : plugins.getEnabledPlugins()) {
+				config.set("plugins#" + info.getId() + "#" + info.getVersion(), true);
 
-		}
+			}
 
-		plugins.getEnabledPlugins().stream().forEach(plugins::disablePlugin);
+			plugins.getEnabledPlugins().stream().forEach(plugins::disablePlugin);
+			
+		}
 
 		config.save();
 	}

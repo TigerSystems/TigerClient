@@ -1,15 +1,18 @@
 package de.MarkusTieger.tigerclient.modules.impl;
 
+import java.util.function.Supplier;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import de.MarkusTieger.common.Client;
 import de.MarkusTieger.common.config.IConfiguration;
 import de.MarkusTieger.common.modules.IModule;
+import de.MarkusTieger.common.utils.CalculatableScreenPosition;
+import de.MarkusTieger.common.utils.FixedScreenPosition;
 import de.MarkusTieger.common.utils.IConfigable;
 import de.MarkusTieger.common.utils.IDraggable;
 import de.MarkusTieger.common.utils.ITickable;
 import de.MarkusTieger.tigerclient.gui.screens.BasicDraggableModuleConfigurationScreen;
-import de.MarkusTieger.tigerclient.utils.module.ScreenPosition;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -23,7 +26,10 @@ public class FPS extends GuiComponent
 		implements IModule<Throwable>, IDraggable<Throwable>, IConfigable<Throwable>, ITickable<Throwable> {
 
 	private boolean enabled = false;
-	private ScreenPosition pos = ScreenPosition.fromRelativePosition(0.5D, 0.5D);
+	
+	private static final Supplier<CalculatableScreenPosition> DEFAULT = () -> CalculatableScreenPosition.createDefault(1, 2, 2, 0, 9);
+	
+	private CalculatableScreenPosition pos = DEFAULT.get();
 	private final Font font = Minecraft.getInstance().font;
 	private String str = "";
 
@@ -65,12 +71,12 @@ public class FPS extends GuiComponent
 		}
 	}
 
-	public void renderShadow(PoseStack stack, ScreenPosition pos) {
+	public void renderShadow(PoseStack stack, FixedScreenPosition pos) {
 		if (!shadow)
 			return;
 
-		fill(stack, (int) pos.getAbsouluteX() - 1, (int) pos.getAbsouluteY() - 1,
-				(int) pos.getAbsouluteX() + getWidth() + 1, (int) pos.getAbsouluteY() + getHeight() + 1, 0x101010CC);
+		fill(stack, (int) pos.getX() - 1, (int) pos.getY() - 1,
+				(int) pos.getX() + getWidth() + 1, (int) pos.getY() + getHeight() + 1, 0x101010CC);
 	}
 
 	@Override
@@ -135,33 +141,34 @@ public class FPS extends GuiComponent
 	}
 
 	@Override
-	public ScreenPosition load() {
+	public CalculatableScreenPosition position() {
 		return pos;
 	}
 
 	@Override
-	public void render(PoseStack stack, ScreenPosition pos) {
+	public void render(PoseStack stack, FixedScreenPosition pos) {
 		renderShadow(stack, pos);
 
-		font.draw(stack, "FPS: " + str, (int) pos.getAbsouluteX(), (int) pos.getAbsouluteY(),
+		font.draw(stack, "FPS: " + str, (int) pos.getX(), (int) pos.getY(),
 				Client.getInstance().getModuleRegistry().getColor());
 	}
 
 	@Override
-	public void renderDummy(PoseStack stack, ScreenPosition pos) {
+	public void renderDummy(PoseStack stack, FixedScreenPosition pos) {
 		renderShadow(stack, pos);
 
-		drawString(stack, font, "FPS: " + 1000, (int) pos.getAbsouluteX(), (int) pos.getAbsouluteY(),
+		drawString(stack, font, "FPS: " + 1000, (int) pos.getX(), (int) pos.getY(),
 				Client.getInstance().getModuleRegistry().getColor());
 	}
 
 	@Override
 	public void reset() {
-		pos = ScreenPosition.fromRelativePosition(0.5D, 0.5D);
+		pos = DEFAULT.get();
+		shadow = false;
 	}
 
 	@Override
-	public void save(ScreenPosition screenPosition) {
+	public void position_set(CalculatableScreenPosition screenPosition) {
 		pos = screenPosition;
 	}
 

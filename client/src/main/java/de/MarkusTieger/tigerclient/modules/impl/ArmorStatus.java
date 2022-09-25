@@ -1,20 +1,23 @@
 package de.MarkusTieger.tigerclient.modules.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import de.MarkusTieger.common.Client;
 import de.MarkusTieger.common.config.IConfiguration;
 import de.MarkusTieger.common.modules.IModule;
+import de.MarkusTieger.common.utils.CalculatableScreenPosition;
+import de.MarkusTieger.common.utils.FixedScreenPosition;
 import de.MarkusTieger.common.utils.IConfigable;
 import de.MarkusTieger.common.utils.IDraggable;
 import de.MarkusTieger.common.utils.IMultiDrag;
 import de.MarkusTieger.tigerclient.api.gui.TigerGuiUtils;
 import de.MarkusTieger.tigerclient.gui.screens.BasicDraggableModuleConfigurationScreen;
-import de.MarkusTieger.tigerclient.utils.module.ScreenPosition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
@@ -30,6 +33,8 @@ public class ArmorStatus extends GuiComponent
 
 	public static boolean enabled = false;
 	
+	private static final Supplier<CalculatableScreenPosition> DEFAULT = () -> CalculatableScreenPosition.createDefault(8, 0, 0, 8, 17);
+	
 	public ArrayList<IDraggable<Throwable>> draggs = new ArrayList<>();
 	public final IDraggable<Throwable> fixed;
 	
@@ -40,7 +45,7 @@ public class ArmorStatus extends GuiComponent
 
 		draggs.add(new IDraggable<Throwable>() {
 
-			public ScreenPosition pos = ScreenPosition.fromRelativePosition(0.5D, 0.5D);
+			public CalculatableScreenPosition pos = CalculatableScreenPosition.DEFAULT.get();
 
 			@Override
 			public int getHeight() {
@@ -58,17 +63,17 @@ public class ArmorStatus extends GuiComponent
 			}
 
 			@Override
-			public ScreenPosition load() {
+			public CalculatableScreenPosition position() {
 				return pos;
 			}
 
 			@Override
-			public void render(PoseStack stack, ScreenPosition pos) throws Throwable {
+			public void render(PoseStack stack, FixedScreenPosition pos) throws Throwable {
 				renderShadow(stack, pos, this);
 
 				try {
 					Iterator<ItemStack> armor = Minecraft.getInstance().getCameraEntity().getArmorSlots().iterator();
-					TigerGuiUtils.renderHotbarItem((int) pos.getAbsouluteX() + 2, (int) pos.getAbsouluteY() + 2,
+					TigerGuiUtils.renderHotbarItem((int) pos.getX() + 2, (int) pos.getY() + 2,
 							armor.next());
 				} catch (Exception ex) {
 
@@ -76,22 +81,22 @@ public class ArmorStatus extends GuiComponent
 			}
 
 			@Override
-			public void renderDummy(PoseStack stack, ScreenPosition pos) throws Throwable {
+			public void renderDummy(PoseStack stack, FixedScreenPosition pos) throws Throwable {
 				renderShadow(stack, pos, this);
 
-				TigerGuiUtils.renderHotbarItem((int) pos.getAbsouluteX() + 2, (int) pos.getAbsouluteY() + 2,
+				TigerGuiUtils.renderHotbarItem((int) pos.getX() + 2, (int) pos.getY() + 2,
 						new ItemStack(Items.DIAMOND_BOOTS));
 			}
 
 			@Override
-			public void save(ScreenPosition p) {
+			public void position_set(CalculatableScreenPosition p) {
 				pos = p;
 			}
 		});
 
 		draggs.add(new IDraggable<Throwable>() {
 
-			public ScreenPosition pos = ScreenPosition.fromRelativePosition(0.5D, 0.5D);
+			public CalculatableScreenPosition pos = CalculatableScreenPosition.DEFAULT.get();
 
 			@Override
 			public int getHeight() {
@@ -109,16 +114,16 @@ public class ArmorStatus extends GuiComponent
 			}
 
 			@Override
-			public ScreenPosition load() {
+			public CalculatableScreenPosition position() {
 				return pos;
 			}
 
 			@Override
-			public void render(PoseStack stack, ScreenPosition pos) {
+			public void render(PoseStack stack, FixedScreenPosition pos) {
 				try {
 					Iterator<ItemStack> armor = (Minecraft.getInstance().getCameraEntity()).getArmorSlots().iterator();
 					armor.next();
-					TigerGuiUtils.renderHotbarItem((int) pos.getAbsouluteX() + 2, (int) pos.getAbsouluteY() + 2,
+					TigerGuiUtils.renderHotbarItem((int) pos.getX() + 2, (int) pos.getY() + 2,
 							armor.next());
 				} catch (Exception ex) {
 
@@ -126,13 +131,13 @@ public class ArmorStatus extends GuiComponent
 			}
 
 			@Override
-			public void renderDummy(PoseStack stack, ScreenPosition pos) {
-				TigerGuiUtils.renderHotbarItem((int) pos.getAbsouluteX() + 2, (int) pos.getAbsouluteY() + 2,
+			public void renderDummy(PoseStack stack, FixedScreenPosition pos) {
+				TigerGuiUtils.renderHotbarItem((int) pos.getX() + 2, (int) pos.getY() + 2,
 						new ItemStack(Items.DIAMOND_LEGGINGS));
 			}
 
 			@Override
-			public void save(ScreenPosition p) {
+			public void position_set(CalculatableScreenPosition p) {
 				pos = p;
 			}
 
@@ -140,7 +145,7 @@ public class ArmorStatus extends GuiComponent
 
 		draggs.add(new IDraggable<Throwable>() {
 
-			public ScreenPosition pos = ScreenPosition.fromRelativePosition(0.5D, 0.5D);
+			public CalculatableScreenPosition pos = CalculatableScreenPosition.DEFAULT.get();
 
 			@Override
 			public int getHeight() {
@@ -158,17 +163,17 @@ public class ArmorStatus extends GuiComponent
 			}
 
 			@Override
-			public ScreenPosition load() {
+			public CalculatableScreenPosition position() {
 				return pos;
 			}
 
 			@Override
-			public void render(PoseStack stack, ScreenPosition pos) {
+			public void render(PoseStack stack, FixedScreenPosition pos) {
 				try {
 					Iterator<ItemStack> armor = (Minecraft.getInstance().getCameraEntity()).getArmorSlots().iterator();
 					armor.next();
 					armor.next();
-					TigerGuiUtils.renderHotbarItem((int) pos.getAbsouluteX() + 2, (int) pos.getAbsouluteY() + 2,
+					TigerGuiUtils.renderHotbarItem((int) pos.getX() + 2, (int) pos.getY() + 2,
 							armor.next());
 				} catch (Exception ex) {
 
@@ -176,13 +181,13 @@ public class ArmorStatus extends GuiComponent
 			}
 
 			@Override
-			public void renderDummy(PoseStack stack, ScreenPosition pos) {
-				TigerGuiUtils.renderHotbarItem((int) pos.getAbsouluteX() + 2, (int) pos.getAbsouluteY() + 2,
+			public void renderDummy(PoseStack stack, FixedScreenPosition pos) {
+				TigerGuiUtils.renderHotbarItem((int) pos.getX() + 2, (int) pos.getY() + 2,
 						new ItemStack(Items.DIAMOND_CHESTPLATE));
 			}
 
 			@Override
-			public void save(ScreenPosition p) {
+			public void position_set(CalculatableScreenPosition p) {
 				pos = p;
 			}
 
@@ -190,7 +195,7 @@ public class ArmorStatus extends GuiComponent
 
 		draggs.add(new IDraggable<Throwable>() {
 
-			public ScreenPosition pos = ScreenPosition.fromRelativePosition(0.5D, 0.5D);
+			public CalculatableScreenPosition pos = CalculatableScreenPosition.DEFAULT.get();
 
 			@Override
 			public int getHeight() {
@@ -208,18 +213,18 @@ public class ArmorStatus extends GuiComponent
 			}
 
 			@Override
-			public ScreenPosition load() {
+			public CalculatableScreenPosition position() {
 				return pos;
 			}
 
 			@Override
-			public void render(PoseStack stack, ScreenPosition pos) {
+			public void render(PoseStack stack, FixedScreenPosition pos) {
 				try {
 					Iterator<ItemStack> armor = (Minecraft.getInstance().getCameraEntity()).getArmorSlots().iterator();
 					armor.next();
 					armor.next();
 					armor.next();
-					TigerGuiUtils.renderHotbarItem((int) pos.getAbsouluteX() + 2, (int) pos.getAbsouluteY() + 2,
+					TigerGuiUtils.renderHotbarItem((int) pos.getX() + 2, (int) pos.getY() + 2,
 							armor.next());
 				} catch (Exception ex) {
 
@@ -227,25 +232,28 @@ public class ArmorStatus extends GuiComponent
 			}
 
 			@Override
-			public void renderDummy(PoseStack stack, ScreenPosition pos) {
-				TigerGuiUtils.renderHotbarItem((int) pos.getAbsouluteX() + 2, (int) pos.getAbsouluteY() + 2,
+			public void renderDummy(PoseStack stack, FixedScreenPosition pos) {
+				TigerGuiUtils.renderHotbarItem((int) pos.getX() + 2, (int) pos.getY() + 2,
 						new ItemStack(Items.DIAMOND_HELMET));
 			}
 
 			@Override
-			public void save(ScreenPosition p) {
+			public void position_set(CalculatableScreenPosition p) {
 				pos = p;
 			}
 
 		});
 	
+		final List<IDraggable<Throwable>> reverse_draggs = draggs.subList(0, draggs.size());
+		Collections.reverse(reverse_draggs);
+		
 		fixed = new IDraggable<Throwable>() {
 
-			private ScreenPosition pos = ScreenPosition.fromRelativePosition(0.5D, 0.5D);
+			private CalculatableScreenPosition pos = DEFAULT.get();
 			
 			@Override
 			public int getHeight() throws Throwable {
-				return (20 * draggs.size()) + (4 * draggs.size());
+				return (16 * reverse_draggs.size()) + 4;
 			}
 
 			@Override
@@ -254,39 +262,39 @@ public class ArmorStatus extends GuiComponent
 			}
 
 			@Override
-			public ScreenPosition load() throws Throwable {
+			public CalculatableScreenPosition position() throws Throwable {
 				return pos;
 			}
 
 			@Override
-			public void render(PoseStack stack, ScreenPosition pos) throws Throwable {
+			public void render(PoseStack stack, FixedScreenPosition pos) throws Throwable {
 				int p = 0;
-				for(IDraggable<Throwable> drag : draggs) {
+				for(IDraggable<Throwable> drag : reverse_draggs) {
 					
-					int y = p * 24;
+					int y = p * 16;
 					
-					drag.render(stack, ScreenPosition.fromAbsolutePosition((int) pos.getAbsouluteX(), (int) pos.getAbsouluteY() + y));
+					drag.render(stack, new FixedScreenPosition((int) pos.getX(), (int) pos.getY() + y - 2));
 					
 					p++;
 				}
 			}
 
 			@Override
-			public void renderDummy(PoseStack stack, ScreenPosition pos) throws Throwable {
+			public void renderDummy(PoseStack stack, FixedScreenPosition pos) throws Throwable {
 				int p = 0;
-				for(IDraggable<Throwable> drag : draggs) {
+				for(IDraggable<Throwable> drag : reverse_draggs) {
 					
-					int y = p * 24;
+					int y = p * 16;
 					
-					drag.renderDummy(stack, ScreenPosition.fromAbsolutePosition((int) pos.getAbsouluteX(), (int) pos.getAbsouluteY() + y));
+					drag.renderDummy(stack, new FixedScreenPosition((int) pos.getX(), (int) pos.getY() + y - 2));
 					
 					p++;
 				}
 			}
 
 			@Override
-			public void save(ScreenPosition screenPosition) throws Throwable {
-				pos = screenPosition;
+			public void position_set(CalculatableScreenPosition FixedScreenPosition) throws Throwable {
+				pos = FixedScreenPosition;
 			}
 
 			@Override
@@ -333,13 +341,13 @@ public class ArmorStatus extends GuiComponent
 		Client.getInstance().getModuleRegistry().update();
 	}
 
-	public void renderShadow(PoseStack stack, ScreenPosition pos, IDraggable<Throwable> draggable) throws Throwable {
+	public void renderShadow(PoseStack stack, FixedScreenPosition pos, IDraggable<Throwable> draggable) throws Throwable {
 		if (!shadow)
 			return;
 
-		fill(stack, (int) pos.getAbsouluteX() - 1, (int) pos.getAbsouluteY() - 1,
-				(int) pos.getAbsouluteX() + draggable.getWidth() + 1,
-				(int) pos.getAbsouluteY() + draggable.getHeight() + 1, 0x101010CC);
+		fill(stack, (int) pos.getX() - 1, (int) pos.getY() - 1,
+				(int) pos.getX() + draggable.getWidth() + 1,
+				(int) pos.getY() + draggable.getHeight() + 1, 0x101010CC);
 	}
 
 	@Override
@@ -407,8 +415,11 @@ public class ArmorStatus extends GuiComponent
 	@Override
 	public void reset() throws Throwable {
 		for (IDraggable<Throwable> drag : getDraggables()) {
-			drag.save(ScreenPosition.fromRelativePosition(0.5D, 0.5D));
+			drag.position_set(CalculatableScreenPosition.DEFAULT.get());
 		}
+		fixed.position_set(DEFAULT.get());
+		shadow = false;
+		fix = true;
 	}
 
 }

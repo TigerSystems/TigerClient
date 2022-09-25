@@ -23,6 +23,7 @@ import de.MarkusTieger.common.utils.IMultiDrag;
 import de.MarkusTieger.common.utils.IPacketEditor;
 import de.MarkusTieger.common.utils.IPacketEditor.PacketSides;
 import de.MarkusTieger.common.utils.ITickable;
+import de.MarkusTieger.common.utils.PositionLine;
 import de.MarkusTieger.tigerclient.gui.screens.ModsPositionScreen;
 import de.MarkusTieger.tigerclient.registry.StaticRegistry;
 import net.minecraft.network.protocol.Packet;
@@ -44,6 +45,8 @@ public class ModuleRegistry implements IModuleRegistry {
 	private final StaticRegistry<IMouseable<?>> mouses = new StaticRegistry<>();
 	private final StaticRegistry<IConfigable<?>> configs = new StaticRegistry<>();
 	private final StaticRegistry<IPacketEditor<?>> packets = new StaticRegistry<>();
+	
+	private final List<PositionLine> pos_lines = new ArrayList<>();
 	
 	private final Predicate<IModule<?>> PREDICATE = (mod) -> {
 
@@ -89,6 +92,17 @@ public class ModuleRegistry implements IModuleRegistry {
 		mouses.mapForGenericTypes(this.mouses, (t) -> (IMouseable<?>) t);
 		configs.mapForGenericTypes(this.configs, (t) -> (IConfigable<?>) t);
 		packets.mapForGenericTypes(this.packets, (t) -> (IPacketEditor<?>)t);
+		
+		pos_lines.clear();
+		
+		for(double x = 0.0D; x <= 1.0D; x += 0.125D) {
+			pos_lines.add(new PositionLine(true, x, 0D, 1D, 0xFFFF0000));
+		}
+		
+		for(double y = 0.0D; y <= 1.0D; y += 0.125D) {
+			pos_lines.add(new PositionLine(false, y, 0D, 1D, 0xFFFF0000));
+		}
+		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -179,7 +193,7 @@ public class ModuleRegistry implements IModuleRegistry {
 		}
 		for (IDraggable<?> drag : drags.toArray()) {
 			try {
-				drag.render(matrix, drag.load());
+				drag.render(matrix, drag.position().calculateFixed(drag.getWidth(), drag.getHeight()));
 			} catch (Throwable ex) {
 				Client.getInstance().getLogger().warn(LoggingCategory.MODULES, "Draggable \""
 						+ drag.getClass().getName() + "\" throwed an Exception on Render-Event. Will be ignored.", ex);
@@ -261,15 +275,56 @@ public class ModuleRegistry implements IModuleRegistry {
 	public PacketSides getSides() {
 		PacketSides sides = PacketSides.NONE;
 		for (IPacketEditor<?> packet : packets) {
+			try {
+				if(packet.getSides() == PacketSides.BOTH) sides = PacketSides.BOTH;
+				if(packet.getSides() == PacketSides.NONE) continue;
+				if(packet.getSides() == PacketSides.SEND && sides != PacketSides.SEND && sides != PacketSides.BOTH) sides = PacketSides.SEND;
+				if(packet.getSides() == PacketSides.RECIEVE && sides != PacketSides.RECIEVE && sides != PacketSides.BOTH) sides = PacketSides.RECIEVE;
+			} catch (Throwable ex) {
+				Client.getInstance().getLogger()
+				.warn(LoggingCategory.MODULES,
+						"PacketEditor \"" + packet.getClass().getName()
+								+ "\" throwed an Exception on Packet-Sides-Event. Will be ignored.",
+						ex);
+			}
 			
 		}
-		return null;
+		return sides;
 	}
 
 	@Override
 	public <E extends Packet<?>> E edit(E packet) {
-		// TODO Auto-generated method stub
-		return null;
+		final E packetfinal = packet;
+		List<IPacketEditor<?>> l = packets.toArray().stream().filter((edit) -> {
+			try {
+				return edit.accept(packetfinal);
+			} catch (Throwable ex) {
+				Client.getInstance().getLogger()
+				.warn(LoggingCategory.MODULES,
+						"PacketEditor \"" + edit.getClass().getName()
+								+ "\" throwed an Exception on Packet-Edit-Event (Packet: \"" + packetfinal.getClass().getName() + "\"). Will be ignored.",
+						ex);
+			}
+			return false;
+		}).toList();
+		
+		for(IPacketEditor<?> p : l)
+			try {
+				packet = p.edit(packet);
+			} catch (Throwable ex) {
+				Client.getInstance().getLogger()
+				.warn(LoggingCategory.MODULES,
+						"PacketEditor \"" + p.getClass().getName()
+								+ "\" throwed an Exception on Packet-Edot-Event (Packet: \"" + packetfinal.getClass().getName() + "\"). Will be ignored.",
+						ex);
+			}
+		
+		return packet;
+	}
+
+	@Override
+	public List<PositionLine> getPositionLines() {
+		return pos_lines;
 	}
 
 }

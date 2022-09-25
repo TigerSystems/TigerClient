@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 import de.MarkusTieger.annotations.NoObfuscation;
 
 @NoObfuscation
-public interface IRegistry<E extends IRegistry<E, T>, T> {
+public interface IRegistry<E extends IRegistry<E, T>, T> extends Iterable<T> {
 
 	@SuppressWarnings("unchecked")
 	default E register(T entry) {

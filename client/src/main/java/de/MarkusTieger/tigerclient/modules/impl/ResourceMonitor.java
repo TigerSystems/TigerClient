@@ -4,18 +4,20 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import de.MarkusTieger.common.Client;
 import de.MarkusTieger.common.config.IConfiguration;
 import de.MarkusTieger.common.modules.IModule;
+import de.MarkusTieger.common.utils.CalculatableScreenPosition;
+import de.MarkusTieger.common.utils.FixedScreenPosition;
 import de.MarkusTieger.common.utils.IConfigable;
 import de.MarkusTieger.common.utils.IDraggable;
 import de.MarkusTieger.common.utils.ITickable;
 import de.MarkusTieger.tigerclient.api.optifine.OptiFineAPI;
 import de.MarkusTieger.tigerclient.gui.screens.BasicDraggableModuleConfigurationScreen;
-import de.MarkusTieger.tigerclient.utils.module.ScreenPosition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
@@ -31,7 +33,9 @@ import oshi.hardware.HardwareAbstractionLayer;
 public class ResourceMonitor extends GuiComponent
 		implements IModule<Throwable>, IDraggable<Throwable>, IConfigable<Throwable>, ITickable<Throwable> {
 
-	private ScreenPosition pos = ScreenPosition.fromRelativePosition(0.5D, 0.5D);
+	private static final Supplier<CalculatableScreenPosition> DEFAULT = () -> CalculatableScreenPosition.createDefault(6, 0, 0, 8, 9);
+	
+	private CalculatableScreenPosition pos = DEFAULT.get();
 	private final Font font = Minecraft.getInstance().font;
 
 	private String fps = "Unknown";
@@ -134,11 +138,11 @@ public class ResourceMonitor extends GuiComponent
 		String fps = Minecraft.getInstance().fpsString;
 		this.fps = fps.substring(0, fps.indexOf(' '));
 
-		of_load: {
+		of_position: {
 			OptiFineAPI api = Client.getInstance().getInstanceRegistry().load(OptiFineAPI.class);
 
 			if (api == null)
-				break of_load;
+				break of_position;
 
 			try {
 				shader = api.getShaderName();
@@ -171,17 +175,18 @@ public class ResourceMonitor extends GuiComponent
 		}
 	}
 
-	public void renderShadow(PoseStack stack, ScreenPosition pos) {
+	public void renderShadow(PoseStack stack, FixedScreenPosition pos) {
 		if (!shadow)
 			return;
 
-		fill(stack, (int) pos.getAbsouluteX() - 1, (int) pos.getAbsouluteY() - 1,
-				(int) pos.getAbsouluteX() + getWidth() + 1, (int) pos.getAbsouluteY() + getHeight() + 1, 0x101010CC);
+		fill(stack, (int) pos.getX() - 1, (int) pos.getY() - 1,
+				(int) pos.getX() + getWidth() + 1, (int) pos.getY() + getHeight() + 1, 0x101010CC);
 	}
 
 	@Override
 	public void reset() {
-		pos = ScreenPosition.fromRelativePosition(0.5D, 0.5D);
+		pos = DEFAULT.get();
+		shadow = false;
 	}
 
 	@Override
@@ -196,7 +201,7 @@ public class ResourceMonitor extends GuiComponent
 		List<String> render = new ArrayList<>();
 
 		render.add(cpuString);
-		render.add("CPU-Average: " + (Math.round(getCPULoadAverage() * 100D) / 100D));
+		render.add("CPU-Average: " + (Math.round(getCPUpositionAverage() * 100D) / 100D));
 		render.add("");
 
 		render.addAll(gpuString);
@@ -215,12 +220,12 @@ public class ResourceMonitor extends GuiComponent
 	}
 
 	@Override
-	public ScreenPosition load() {
+	public CalculatableScreenPosition position() {
 		return pos;
 	}
 
 	@Override
-	public void render(PoseStack stack, ScreenPosition pos) {
+	public void render(PoseStack stack, FixedScreenPosition pos) {
 		renderShadow(stack, pos);
 
 		Runtime rt = Runtime.getRuntime();
@@ -232,7 +237,7 @@ public class ResourceMonitor extends GuiComponent
 		List<String> render = new ArrayList<>();
 
 		render.add(cpuString);
-		render.add("CPU-Average: " + (Math.round(getCPULoadAverage() * 100D) / 100D));
+		render.add("CPU-Average: " + (Math.round(getCPUpositionAverage() * 100D) / 100D));
 		render.add("");
 
 		render.addAll(gpuString);
@@ -247,7 +252,7 @@ public class ResourceMonitor extends GuiComponent
 
 			int y = p * font.lineHeight;
 
-			drawString(stack, font, str, (int) pos.getAbsouluteX(), (int) pos.getAbsouluteY() + y,
+			drawString(stack, font, str, (int) pos.getX(), (int) pos.getY() + y,
 					Client.getInstance().getModuleRegistry().getColor());
 
 			p++;
@@ -256,13 +261,13 @@ public class ResourceMonitor extends GuiComponent
 	}
 
 	@Override
-	public void renderDummy(PoseStack stack, ScreenPosition pos) {
+	public void renderDummy(PoseStack stack, FixedScreenPosition pos) {
 		renderShadow(stack, pos);
 
 		List<String> render = new ArrayList<>();
 
 		render.add(cpuString);
-		render.add("CPU-Average: " + (Math.round(getCPULoadAverage() * 100D) / 100D));
+		render.add("CPU-Average: " + (Math.round(getCPUpositionAverage() * 100D) / 100D));
 		render.add("");
 
 		render.addAll(gpuString);
@@ -276,22 +281,21 @@ public class ResourceMonitor extends GuiComponent
 
 			int y = p * font.lineHeight;
 
-			drawString(stack, font, str, (int) pos.getAbsouluteX(), (int) pos.getAbsouluteY() + y,
+			drawString(stack, font, str, (int) pos.getX(), (int) pos.getY() + y,
 					Client.getInstance().getModuleRegistry().getColor());
 
 			p++;
 		}
 	}
 
-	private double getCPULoadAverage() {
+	private double getCPUpositionAverage() {
 		OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
 		return osBean.getSystemLoadAverage();
 	}
 
 	@Override
-	public void save(ScreenPosition screenPosition) {
-		if (screenPosition == null)
-			reset();
+	public void position_set(CalculatableScreenPosition screenPosition) {
+		this.pos = screenPosition;
 	}
 
 }

@@ -1,16 +1,19 @@
 package de.MarkusTieger.tigerclient.modules.impl;
 
+import java.util.function.Supplier;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import de.MarkusTieger.common.Client;
 import de.MarkusTieger.common.config.IConfiguration;
 import de.MarkusTieger.common.modules.IModule;
+import de.MarkusTieger.common.utils.CalculatableScreenPosition;
+import de.MarkusTieger.common.utils.FixedScreenPosition;
 import de.MarkusTieger.common.utils.IConfigable;
 import de.MarkusTieger.common.utils.IDraggable;
 import de.MarkusTieger.common.utils.ITickable;
 import de.MarkusTieger.tigerclient.api.gui.TigerGuiUtils;
 import de.MarkusTieger.tigerclient.gui.screens.BasicDraggableModuleConfigurationScreen;
-import de.MarkusTieger.tigerclient.utils.module.ScreenPosition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
@@ -26,7 +29,10 @@ public class SoupStatus extends GuiComponent
 
 	public static boolean enabled = false;
 	public static int soups = 0;
-	private ScreenPosition pos = ScreenPosition.fromRelativePosition(0.5D, 0.5D);
+	
+	private static final Supplier<CalculatableScreenPosition> DEFAULT = () -> CalculatableScreenPosition.createDefault(3, 0, 0, 2, 17);
+	
+	private CalculatableScreenPosition pos = DEFAULT.get();
 	@SuppressWarnings("unused")
 	private final Font font = Minecraft.getInstance().font;
 
@@ -58,12 +64,12 @@ public class SoupStatus extends GuiComponent
 		}
 	}
 
-	public void renderShadow(PoseStack stack, ScreenPosition pos) {
+	public void renderShadow(PoseStack stack, FixedScreenPosition pos) {
 		if (!shadow)
 			return;
 
-		fill(stack, (int) pos.getAbsouluteX() - 1, (int) pos.getAbsouluteY() - 1,
-				(int) pos.getAbsouluteX() + getWidth() + 1, (int) pos.getAbsouluteY() + getHeight() + 1, 0x101010CC);
+		fill(stack, (int) pos.getX() - 1, (int) pos.getY() - 1,
+				(int) pos.getX() + getWidth() + 1, (int) pos.getY() + getHeight() + 1, 0x101010CC);
 	}
 
 	@Override
@@ -134,7 +140,7 @@ public class SoupStatus extends GuiComponent
 	}
 
 	@Override
-	public ScreenPosition load() {
+	public CalculatableScreenPosition position() {
 		return pos;
 	}
 
@@ -159,30 +165,31 @@ public class SoupStatus extends GuiComponent
 	}
 
 	@Override
-	public void render(PoseStack stack, ScreenPosition pos) {
+	public void render(PoseStack stack, FixedScreenPosition pos) {
 		renderShadow(stack, pos);
 
-		TigerGuiUtils.renderHotbarItem((int) pos.getAbsouluteX() + 2, (int) pos.getAbsouluteY() + 2,
+		TigerGuiUtils.renderHotbarItem((int) pos.getX() + 2, (int) pos.getY() + 2,
 				new ItemStack(Items.MUSHROOM_STEW, soups));
 
 	}
 
 	@Override
-	public void renderDummy(PoseStack stack, ScreenPosition pos) {
+	public void renderDummy(PoseStack stack, FixedScreenPosition pos) {
 		renderShadow(stack, pos);
 
-		TigerGuiUtils.renderHotbarItem((int) pos.getAbsouluteX() + 2, (int) pos.getAbsouluteY() + 2,
+		TigerGuiUtils.renderHotbarItem((int) pos.getX() + 2, (int) pos.getY() + 2,
 				new ItemStack(Items.MUSHROOM_STEW, 6));
 
 	}
 
 	@Override
 	public void reset() {
-		pos = ScreenPosition.fromRelativePosition(0.5D, 0.5D);
+		pos = DEFAULT.get();
+		shadow = false;
 	}
 
 	@Override
-	public void save(ScreenPosition p) {
+	public void position_set(CalculatableScreenPosition p) {
 		pos = p;
 	}
 

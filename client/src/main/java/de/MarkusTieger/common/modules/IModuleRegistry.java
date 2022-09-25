@@ -1,5 +1,7 @@
 package de.MarkusTieger.common.modules;
 
+import java.util.List;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import de.MarkusTieger.annotations.NoObfuscation;
@@ -11,6 +13,7 @@ import de.MarkusTieger.common.utils.IKeyable;
 import de.MarkusTieger.common.utils.IMouseable;
 import de.MarkusTieger.common.utils.IPacketEditor;
 import de.MarkusTieger.common.utils.ITickable;
+import de.MarkusTieger.common.utils.PositionLine;
 import de.MarkusTieger.common.utils.IPacketEditor.PacketSides;
 import net.minecraft.network.protocol.Packet;
 
@@ -47,4 +50,6 @@ public interface IModuleRegistry extends IRegistry<IModuleRegistry, IModule<?>> 
 	public <E extends Packet<?>> E edit(E packet);
 	
 	int getColor();
+
+	List<PositionLine> getPositionLines();
 }
