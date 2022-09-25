@@ -99,8 +99,8 @@ public class TigerClient extends Client
 	private static final Logger APACHE_LOGGER = LogManager.getLogger();
 
 	public static final String versionType = "Beta";
-	public static final String clVersion = "2.10.0";
-	public static final String build = "0023";
+	public static final String clVersion = "2.10.1";
+	public static final String build = "0024";
 	public static final String version_format = "%s-%s";
 	private static final String version = String.format(version_format, clVersion, build);
 	private static final int versionNumber = 2;
