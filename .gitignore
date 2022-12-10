@@ -20,6 +20,7 @@ tools/compiler/source*
 **/TigerClient/**
 !**/TigerClient/debug
 **/sign.txt
+**/.idea
 
 
 data/gradle/*

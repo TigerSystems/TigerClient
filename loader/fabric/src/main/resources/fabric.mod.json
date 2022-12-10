@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "tc_loader_fabric",
+  "version": "${version}",
+
+  "name": "Tiger Client Loader",
+  "description": "This is the loader for the Tiger Client.",
+  "authors": [
+    "CraftingDragon007"
+  ],
+  "contact": {
+    "sources": "https://github.com/TigerSystems/TigerClient"
+  },
+
+  "license": "CC BY-NC-SA 4.0",
+  "icon": "src/common/resources/icon_512.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "ch.CraftingDragon007.tigerclientloader.LoaderMod"
+    ]
+  },
+
+  "depends": {
+    "fabricloader": ">=0.14.6",
+    "fabric": "*",
+    "minecraft": "~1.18.2",
+    "java": ">=17"
+  }
+}
