@@ -1,8 +1,5 @@
 **/.gradle/
 **/build/
-**/.settings/
-**/.project
-**/.classpath
 data/mdk/
 data/compiled/
 **/README.txt
