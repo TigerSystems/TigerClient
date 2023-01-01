@@ -12,7 +12,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.MessageDigest;
@@ -71,12 +75,22 @@ public class Installer {
     public static final String FORGE = "%forge_version%";
     public static final String ICON = "data:image/png;base64,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";
 
-    public static final String BASE_URL = "https://tigersystems.cf/tigerclient/files/";
+    public static String BASE_URL = "https://tigersystems.cf/tigerclient/files/";
     
     private static boolean INSTALL_RECOMMENDED = true;
     
     public static void main(String[] args) {
 
+    	if(new File("debug").exists()) {
+    		System.out.println("Reconfiguring Download-Server to Local...");
+    		
+    		try {
+				BASE_URL = new URI("file", null, new File("../../data/compiled/").getAbsolutePath() + "/", null).toURL().toString();
+			} catch (Throwable ex) {
+				ex.printStackTrace();
+			}
+    		
+    	}
     	
     	System.out.println("Initializing Look and Feel...");
         if(System.getProperty("ui.useSystem") != null) {
@@ -1133,8 +1147,8 @@ public class Installer {
             percend = 0D;
 
             try {
-                HttpURLConnection con = (HttpURLConnection) new URL(BASE_URL + "loaders/forge.jar").openConnection();
-                con.setRequestProperty("User-Agent", "TigerSystems");
+            	URLConnection con = new URL(BASE_URL + "loaders/forge.jar").openConnection();
+            	 if (con instanceof HttpURLConnection http) http.setRequestProperty("User-Agent", "TigerSystems");
                 
                 double content = ((double)con.getContentLength());
                 
@@ -1195,8 +1209,8 @@ public class Installer {
             double pos = 0D;
             for(ModFile mod_file : mod_files) {
             	try {
-            		HttpURLConnection con = (HttpURLConnection) new URL(mod_file.file_download()).openConnection();
-                    con.setRequestProperty("User-Agent", "TigerSystems");
+            		URLConnection con = new URL(mod_file.file_download()).openConnection();
+            		 if (con instanceof HttpURLConnection http) http.setRequestProperty("User-Agent", "TigerSystems");
                     InputStream in = con.getInputStream();
                     int len;
                     byte[] buffer = new byte[1024];
@@ -1258,10 +1272,10 @@ public class Installer {
         		state = "Downloading Sectors... (" + pos + ")";
         		
         		try {
-            		HttpURLConnection con = (HttpURLConnection) new URL(BASE_URL + "loaders/vanilla/sector" + pos + ".zip").openConnection();
-                    con.setRequestProperty("User-Agent", "TigerSystems");
+            		URLConnection con = new URL(BASE_URL + "loaders/vanilla/sector" + pos + ".raw").openConnection();
+                    if (con instanceof HttpURLConnection http) http.setRequestProperty("User-Agent", "TigerSystems");
                     InputStream in = con.getInputStream();
-                    File file = new File(ver, "sector" + pos + ".zip");
+                    File file = new File(ver, "sector" + pos + ".raw");
                     if(!file.exists()) file.createNewFile();
                     FileOutputStream out = new FileOutputStream(file);
                     while((len = in.read(buffer)) > 0){
@@ -1286,133 +1300,37 @@ public class Installer {
         	
         	percend = 0.40;
         	
-        	state = "Downloading Signature...";
-        	
-        	try {
-        		HttpURLConnection con = (HttpURLConnection) new URL(BASE_URL + "loaders/vanilla/signature.zip").openConnection();
-                con.setRequestProperty("User-Agent", "TigerSystems");
-                int length = con.getContentLength();
-                InputStream in = con.getInputStream();
-                File file = new File(ver, "signature.zip");
-                if(!file.exists()) file.createNewFile();
-                FileOutputStream out = new FileOutputStream(file);
-                
-                double readed = 0D;
-                while((len = in.read(buffer)) > 0){
-                    out.write(buffer, 0, len);
-                    readed += len;
-                    
-                    double data = readed * 0.1D;
-                    data /= ((double)length);
-                    percend = 0.4D + data;
-                }
-                out.flush();
-                out.close();
-                in.close();
-                
-            } catch(Exception e) {
-            	e.printStackTrace();
-                System.out.println("Signature missing.");
-            }
-        	
         	percend = 0.50;
         	state = "Building Jar...";
         	
         	try {
         		
-        		List<String> ignore = new ArrayList<>();
-        		
         		File file = new File(ver, target_id + ".jar");
         		if(!file.exists()) file.createNewFile();
         		FileOutputStream out = new FileOutputStream(file);
-        		ZipOutputStream zos = new ZipOutputStream(out);
-        		
-        		ZipEntry ze = null;
         		
         		for(int i = 0; i < pos; i++) {
         			
-        			state = "Building Jar... ( " + i + " / " + (pos - 1) + " )";
-        			
-        			
-        			FileInputStream in = new FileInputStream(new File(ver, "sector" + i + ".zip"));
-        			ZipInputStream zis = new ZipInputStream(in);
-        			
-        			while((ze = zis.getNextEntry()) != null) {
+        			File s = new File(ver, "sector" + i + ".raw");
+        			try (FileInputStream fis = new FileInputStream(s)) {
         				
-        				state = "Building Jar... ( " + i + " / " + (pos - 1) + " )<br/>" + ze.getName();
-        				
-        				if(ze.getName().toLowerCase().startsWith("meta-inf")) continue;
-        				
-        				if(ignore.contains(ze.getName())) continue;
-        				ignore.add(ze.getName());
-        				
-        				if(ze.isDirectory()) {
-        					zos.putNextEntry(new ZipEntry(ze));
-        					zos.closeEntry();
-        				} else {
-        					zos.putNextEntry(new ZipEntry(ze));
-        					buffer_copy(zis, zos, buffer);
-        					zos.closeEntry();
+        				while((len = fis.read(buffer)) > 0) {
+        					out.write(buffer, 0, len);
+        					out.flush();
         				}
-        				
-        				zis.closeEntry();
         				
         			}
         			
-        			zis.close();
-        			
-        			double data = ((double)i) * 0.40D;
-        			data /= ((double)pos);
-        			percend = 0.50D + data;
-        			
         		}
         		
-        		
-        		
-        		File f = new File(ver, "signature.zip");
-        		if(f.exists()) {
-        			
-        			state = "Building Jar (Signature)...";
-        			
-        			FileInputStream in = new FileInputStream(f);
-        			ZipInputStream zis = new ZipInputStream(in);
-        			
-        			while((ze = zis.getNextEntry()) != null) {
-        				
-        				state = "Building Jar (Signature)...<br/>" + ze.getName();
-        				
-        				if(ignore.contains(ze.getName())) continue;
-        				ignore.add(ze.getName());
-        				
-        				if(ze.isDirectory()) {
-        					zos.putNextEntry(new ZipEntry(ze));
-        					zos.closeEntry();
-        				} else {
-        					zos.putNextEntry(new ZipEntry(ze));
-        					buffer_copy(zis, zos, buffer);
-        					zos.closeEntry();
-        				}
-        				
-        				zis.closeEntry();
-        				
-        			}
-        			
-        			zis.close();
-        			
-        			percend = 0.95D;
-        			
-        		}
-        		
-        		zos.finish();
-        		zos.flush();
-        		zos.close();
-        		
+        		out.flush();
+        		out.close();
         		
         		final File jar = file;
         		
         		
-        		HttpURLConnection con = (HttpURLConnection) new URL(BASE_URL + "config/launcher.json").openConnection();
-                con.setRequestProperty("User-Agent", "TigerSystems");
+        		URLConnection con = new URL(BASE_URL + "config/launcher.json").openConnection();
+        		 if (con instanceof HttpURLConnection http) http.setRequestProperty("User-Agent", "TigerSystems");
                 InputStream in = con.getInputStream();
                 file = new File(ver, target_id + ".json");
                 if(!file.exists()) file.createNewFile();

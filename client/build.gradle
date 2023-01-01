@@ -7,24 +7,37 @@ group = 'de.MarkusTieger.tigerclient'
 archivesBaseName = 'tigerclient'
 version = '0.0.0'
 
+sourceCompatibility = 17
+targetCompatibility = 17
+
 String mc_version = project.property("net.minecraft.version");
 String forge_version = project.property("net.minecraftforge.version");
 String mc_mappings = project.property("net.minecraft.mappings");
 
-sourceCompatibility = 17
-targetCompatibility = 17
 
 repositories {
     maven {
         name = 'minecraft-repo'
         url = 'https://libraries.minecraft.net/'
     }
+    maven {
+        name = 'forge'
+        url = 'https://maven.minecraftforge.net'
+    }
+    maven {
+    	name = 'forge_gradle_user_repo'
+    	url = 'file://' + new File(project.gradle.gradleUserHomeDir, "caches/forge_gradle/minecraft_user_repo").getAbsolutePath()
+    }
+    maven {
+    	name = 'forge_gradle_mcp_repo'
+    	url = 'file://' + new File(project.gradle.gradleUserHomeDir, "caches/forge_gradle/mcp_repo").getAbsolutePath()
+    }
     mavenCentral()
 }
 
 dependencies {
     
-	compileOnly 'com.mojang:logging:1.0.0'
+	/*compileOnly 'com.mojang:logging:1.0.0'
 	compileOnly 'com.mojang:blocklist:1.0.10'
 	compileOnly 'com.mojang:patchy:2.2.10'
 	compileOnly 'com.github.oshi:oshi-core:5.8.5'
@@ -83,11 +96,17 @@ dependencies {
 	compileOnly 'com.mojang:text2speech:1.12.4'
 	compileOnly 'com.mojang:text2speech:1.12.4'
 	compileOnly 'ca.weblite:java-objc-bridge:1.0.0'
-	compileOnly 'ca.weblite:java-objc-bridge:1.0.0'
+	compileOnly 'ca.weblite:java-objc-bridge:1.0.0'*/
     
     
-    compileOnly files("../data/gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/" + mc_version + "-" + forge_version + "_mapped_" + mc_mappings + "_" + mc_version + "/forge-" + mc_version + "-" + forge_version + "_mapped_" + mc_mappings + "_" + mc_version + "-recomp.jar")
+    // compileOnly files("../data/gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/" + mc_version + "-" + forge_version + "_mapped_" + mc_mappings + "_" + mc_version + "/forge-" + mc_version + "-" + forge_version + "_mapped_" + mc_mappings + "_" + mc_version + "-recomp.jar")
     // system group: 'net.minecraft.client', name: 'minecraft', version:'1.18.2'
+
+	compileOnly("net.minecraftforge:forge:" + mc_version + "-" + forge_version + "_mapped_" + mc_mappings + "_" + mc_version) {
+		exclude group: 'net.minecraft', module: 'client'
+	}
+	
+	compileOnly "net.minecraftforge:forge:" + mc_version
 }
 
 /*publishing {

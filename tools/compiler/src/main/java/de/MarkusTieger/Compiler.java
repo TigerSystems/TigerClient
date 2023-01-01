@@ -670,15 +670,7 @@ public class Compiler {
         delete(defJar);
         delete(obfJar);
         
-        System.out.println("Sectoring Vanilla-Jar...");
-        
-        File vanilla = new File(loader_dir, "vanilla");
-        if(!vanilla.exists()) vanilla.mkdirs();
-        
-        sectored_files = sector(vanilla, obf_vanilla, MAX_FILE_SIZE, false);
-        Arrays.stream(sectored_files).forEach(signs::add);
-        
-        signs.add(vanillaJar);
+        signs.add(obf_vanilla);
         
         System.out.println("Signing Jars...");
 
@@ -697,6 +689,13 @@ public class Compiler {
         
         for(File f : signs) sign(f, CERT, PASS, keystore);
 
+        System.out.println("Sectoring Vanilla-Jar...");
+        
+        File vanilla = new File(loader_dir, "vanilla");
+        if(!vanilla.exists()) vanilla.mkdirs();
+        
+        sectored_files = sectorRaw(vanilla, obf_vanilla, MAX_FILE_SIZE, false);
+        
         System.out.println("Generating Launcher-Config (Vanilla) ...");
         
         
@@ -1687,6 +1686,53 @@ public class Compiler {
         cszos.finish();
         cszos.flush();
         cszos.close();
+        files.add(csfile);
+
+        if(deleteAfterSector) Files.delete(in.toPath());
+        return files.toArray(new File[0]);
+    }
+    
+    private static File[] sectorRaw(File odir, File in, long MAX_SIZE, boolean deleteAfterSector) throws IOException {
+        FileInputStream cin = new FileInputStream(in);
+        ZipInputStream czis = new ZipInputStream(cin);
+
+        if(odir.exists()) {
+            delete(odir);
+        }
+        odir.mkdirs();
+
+        List<File> files = new ArrayList<>();
+        
+        File csfile = new File(odir, "sector0.raw");
+        if(!csfile.exists()) csfile.createNewFile();
+
+        FileOutputStream csout = new FileOutputStream(csfile);
+
+        int len;
+        byte[] buffer = new byte[1024];
+        
+        
+        long writed = 0L;
+        int count = 0;
+
+        while((len = cin.read(buffer)) > 0){
+
+        	if((writed + buffer.length) > MAX_SIZE) {
+        		count++;
+        		csfile = new File(odir, "sector" + count + ".raw");
+        		if(!csfile.exists()) csfile.createNewFile();
+        		csout.close();
+        		csout = new FileOutputStream(csfile);
+        		writed = 0L;
+        	}
+        	
+        	csout.write(buffer, 0, len);
+        	writed += len;
+        }
+
+        czis.close();
+        csout.close();
+
         files.add(csfile);
 
         if(deleteAfterSector) Files.delete(in.toPath());
