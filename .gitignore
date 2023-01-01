@@ -1,8 +1,5 @@
 **/.gradle/
 **/build/
-**/.settings/
-**/.project
-**/.classpath
 data/mdk/
 data/compiled/
 **/README.txt
@@ -20,6 +17,7 @@ tools/compiler/source*
 **/TigerClient/**
 !**/TigerClient/debug
 **/sign.txt
+**/.idea
 
 
 data/gradle/*
