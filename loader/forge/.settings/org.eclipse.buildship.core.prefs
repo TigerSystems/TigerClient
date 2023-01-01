@@ -1,0 +1,13 @@
+arguments=-Dgradle.user.home\=../../data/gradle --stacktrace
+auto.sync=true
+build.scans.enabled=false
+connection.gradle.distribution=GRADLE_DISTRIBUTION(VERSION(7.5.1))
+connection.project.dir=
+eclipse.preferences.version=1
+gradle.user.home=
+java.home=/usr/lib/jvm/temurin-11-jdk-amd64
+jvm.arguments=
+offline.mode=false
+override.workspace.settings=true
+show.console.view=true
+show.executions.view=true
